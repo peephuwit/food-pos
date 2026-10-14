@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ระบบ POS ร้านค้า</title>
+<link rel="icon" type="image/png" href="img/cashier.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://script.googleusercontent.com">
+<link rel="preconnect" href="https://lh3.googleusercontent.com">
+<link href="https://fonts.googleapis.com/css2?family=Athiti:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=2.8">
+</head>
+<body class="guest">
+
+<!-- ===== เข้าสู่ระบบ ===== -->
+<div id="login">
+  <form class="login-card" id="login-form">
+    <div class="login-brand">
+      <img class="login-logo" src="img/cashier.png?v=2" alt="" width="76" height="76">
+      <b>POS</b>
+      <small>ระบบขายหน้าร้าน</small>
+    </div>
+
+    <label class="fld">
+      <span>ชื่อผู้ใช้งาน</span>
+      <div class="fld-wrap">
+        <span class="fld-lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span>
+        <input id="login-username" class="has-lead" autocomplete="username" autocapitalize="off" spellcheck="false">
+      </div>
+    </label>
+    <label class="fld">
+      <span>รหัสผ่าน</span>
+      <div class="fld-wrap">
+        <span class="fld-lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg></span>
+        <input id="login-password" class="has-lead" type="password" autocomplete="current-password">
+        <button type="button" id="login-password-toggle" class="pw-eye" aria-label="แสดงรหัสผ่าน" aria-pressed="false">
+          <svg class="pw-eye-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+          <svg class="pw-eye-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.6 6.6A9.9 9.9 0 0 1 12 5.5c6.4 0 10 6.5 10 6.5a17.6 17.6 0 0 1-3.5 4.3M6.2 8.2A17.7 17.7 0 0 0 2 12s3.6 6.5 10 6.5a9.9 9.9 0 0 0 4-.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/><path d="M3 3l18 18"/></svg>
+        </button>
+      </div>
+    </label>
+
+    <div class="login-err" id="login-error"></div>
+    <button class="btn-solid btn-block" id="login-btn" type="submit">เข้าสู่ระบบ</button>
+  </form>
+</div>
+
+<!-- ===== ไซด์บาร์ ===== -->
+<div class="nav-scrim" id="nav-scrim"></div>
+<aside class="side" id="side">
+  <div class="side-brand">
+    <img class="brand-logo" src="img/cashier.png?v=2" alt="" width="30" height="30">
+    <div class="side-title">
+      <b>POS</b>
+      <small>ระบบขายหน้าร้าน</small>
+    </div>
+  </div>
+
+  <nav class="side-nav" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="pos">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/></svg></span>
+      ขายหน้าร้าน
+      <span class="tag" id="cart-tag"></span>
+    </button>
+    <button role="tab" aria-selected="false" data-tab="tables">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+      จัดการ 4 โต๊ะ
+      <span class="tag" id="tables-tag" style="background:#ef4444; color:#fff; display:none;"></span>
+    </button>
+    <button role="tab" aria-selected="false" data-tab="analytics">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+      สถิติยอดขาย & AI
+    </button>
+    <button role="tab" aria-selected="false" data-tab="orders">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6M9 15h3"/></svg></span>
+      ประวัติการขาย
+    </button>
+    <button role="tab" aria-selected="false" data-tab="menu">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h11a3 3 0 0 1 3 3v15H7a3 3 0 0 1-3-3z"/><path d="M18 8h2v13H7"/><path d="M8 7h6M8 11h6"/></svg></span>
+      เมนูและราคา
+    </button>
+    <a href="kitchen.html" target="_blank" onclick="if (typeof openExternalUrl === 'function') { openExternalUrl('kitchen.html'); return false; }" style="text-decoration:none; display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:6px; color:var(--side-fg); font-size:13.5px; transition:all .15s ease; margin-top:4px;" title="เปิดหน้าจอครัว (KDS) ในแท็บใหม่">
+      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.8V4a2 2 0 1 1 4 0v9.8"/><path d="M8 13.8V21"/><path d="M14 4v5a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V4"/><path d="M16 11v10"/></svg></span>
+      <span>จอในครัว (KDS)</span>
+      <span style="margin-left:auto; font-size:10.5px; background:#3b82f6; color:#fff; padding:2px 7px; border-radius:10px; font-weight:600;">NEW</span>
+    </a>
+  </nav>
+
+  <div class="side-foot">
+    <div class="me">
+      <span class="me-av" id="me-initial">–</span>
+      <span class="me-info">
+        <b id="me-name">—</b>
+        <small id="me-role">—</small>
+      </span>
+    </div>
+    <button class="side-out" id="logout-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>
+      ออกจากระบบ
+    </button>
+  </div>
+</aside>
+
+<!-- ===== เนื้อหา ===== -->
+<main class="main">
+  <div class="bar">
+    <button class="hamburger" id="nav-toggle" aria-label="เปิด / ปิดเมนู" aria-expanded="false" aria-controls="side">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+
+    <!-- แท็บหมวดหมู่ของหน้าขาย -->
+    <div class="cats" id="cats"></div>
+
+    <!-- แถบเครื่องมือของอีกสองหน้า -->
+    <div class="bar-tools" id="bar-tools" hidden>
+      <h1 id="page-title">ประวัติการขาย</h1>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="admin-search" placeholder="ค้นหา" aria-label="ค้นหา">
+      </div>
+      <button class="btn-solid" id="add-menu-btn" hidden>+ เพิ่มเมนู</button>
+    </div>
+  </div>
+
+  <!-- ขายหน้าร้าน -->
+  <section class="view" id="view-pos">
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- จัดการ 4 โต๊ะ -->
+  <section class="view pad" id="view-tables" hidden>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h2 style="font-size:18px; font-weight:700;">สถานะ 4 โต๊ะ (Dine-in Tables)</h2>
+      <button class="btn-line" onclick="loadTablesView()" style="font-size:13px; padding:6px 14px;">รีเฟรชสถานะ</button>
+    </div>
+    
+    <div id="tables-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:24px;">
+      <!-- โต๊ะจะถูกเรนเดอร์ตรงนี้ -->
+    </div>
+
+    <!-- ลิงก์ / QR Code สำหรับให้ลูกค้าสแกนสั่งอาหาร -->
+    <div class="panel" style="padding:16px;">
+      <div class="panel-head" style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span>QR Code & ลิงก์สั่งอาหารสำหรับลูกค้า (Table QR Ordering)</span>
+        <span style="font-size:12px; color:var(--muted); font-weight:400;">ลูกค้าสแกนด้วยมือถือผ่าน WiFi เดียวกัน หรือคลิกเพื่อทดสอบเปิดสั่งอาหาร</span>
+      </div>
+      <div id="table-qr-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px;">
+        <!-- การ์ด QR Code ของแต่ละโต๊ะจะถูกสร้างตรงนี้ -->
+      </div>
+    </div>
+  </section>
+
+  <!-- สถิติยอดขาย & AI Analytics -->
+  <section class="view pad" id="view-analytics" hidden>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+      <h2 style="font-size:18px; font-weight:700;">ภาพรวมสถิติยอดขาย & การวิเคราะห์ (Sales Analytics)</h2>
+      
+      <!-- แถบเลือกช่วงเวลา: ทั้งหมด, วันนี้, สัปดาห์นี้, ปีนี้, ระบุวัน, ระบุเดือน, ระบุปี -->
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div style="display:flex; gap:4px; background:#fff; padding:4px; border-radius:10px; border:1px solid var(--line);">
+          <button type="button" class="analytics-filter-btn on" data-period="all" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">ทั้งหมด</button>
+          <button type="button" class="analytics-filter-btn" data-period="today" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">วันนี้</button>
+          <button type="button" class="analytics-filter-btn" data-period="this_week" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">สัปดาห์นี้ (จ.-อา.)</button>
+          <button type="button" class="analytics-filter-btn" data-period="this_year" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">ปีนี้</button>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line);">
+          <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุวัน:</span>
+          <input type="date" id="analytics-date-picker" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none;">
+        </div>
+
+        <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line);">
+          <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุเดือน:</span>
+          <input type="month" id="analytics-month-picker" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none;">
+        </div>
+
+        <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line);">
+          <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุปี:</span>
+          <select id="analytics-year-select" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none; background:#fff; cursor:pointer;">
+            <option value="">เลือกปี...</option>
+          </select>
+        </div>
+
+        <!-- เครื่องมือสำรองข้อมูล & รีเซ็ตข้อมูลทดสอบ & Discord Automation -->
+        <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
+          <button type="button" id="btn-open-discord-modal" class="btn-solid" style="padding:6px 12px; font-size:12.5px; height:auto; background:#5865F2; border:none;" title="ตั้งค่า Discord Webhook และส่งรายงานสรุปยอดขาย">
+            Discord สรุปยอด
+          </button>
+          <a href="http://localhost:8000/backup-database" download class="btn-line" style="padding:6px 12px; font-size:12.5px; height:auto; text-decoration:none; display:inline-flex; align-items:center; gap:5px; color:var(--ink);" title="ดาวน์โหลดไฟล์สำรองข้อมูลเป็น Excel (.xlsx)">
+            สำรองฐานข้อมูล (Excel)
+          </a>
+          <button type="button" id="btn-reset-test-data" class="btn-line" style="padding:6px 12px; font-size:12.5px; height:auto; color:var(--red); border-color:#fecaca;" title="ล้างบิลทดสอบทั้งหมดก่อนเปิดร้านจริง">
+            ล้างข้อมูลทดสอบ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- สรุปตัวเลขสำคัญ (ยอดรวม, เงินสด, โอนเงิน/สแกน QR, บิลทั้งหมด, เฉลี่ยต่อบิล) -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+      <div class="stat">
+        <small id="analytics-revenue-label">ยอดขายรวม</small>
+        <b id="analytics-revenue">฿0</b>
+      </div>
+      <div class="stat" style="border-left: 3px solid #10b981;">
+        <small style="display:flex; align-items:center; gap:6px;">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+          ยอดเงินสด
+        </small>
+        <b id="analytics-cash" style="color: #10b981;">฿0</b>
+      </div>
+      <div class="stat" style="border-left: 3px solid #3b82f6;">
+        <small style="display:flex; align-items:center; gap:6px;">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#3b82f6;"></span>
+          ยอดโอนเงิน / QR
+        </small>
+        <b id="analytics-transfer" style="color: #3b82f6;">฿0</b>
+      </div>
+      <div class="stat">
+        <small>จำนวนบิลที่ปิดการขาย</small>
+        <b id="analytics-bills" style="color: var(--ink);">0 บิล</b>
+      </div>
+      <div class="stat">
+        <small>ยอดเฉลี่ยต่อบิล (Avg Ticket)</small>
+        <b id="analytics-avg" style="color: var(--side-hi);">฿0</b>
+      </div>
+    </div>
+
+    <!-- แผงเปรียบเทียบยอดขายรายสัปดาห์ (Weekly Breakdown จันทร์ - อาทิตย์ ตัดตามขอบเดือน) -->
+    <div class="panel" id="analytics-weekly-panel" style="margin-bottom: 20px; display: none;">
+      <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>ยอดขายแยกตามสัปดาห์ (จันทร์ - อาทิตย์ ประจำเดือน <span id="analytics-weekly-month-title"></span>)</span>
+        <span style="font-size:12px; color:var(--muted); font-weight:400;">คลิกที่สัปดาห์เพื่อกรองดูรายละเอียดเฉพาะสัปดาห์นั้นได้</span>
+      </div>
+      <div style="padding: 16px;">
+        <div id="analytics-weekly-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;"></div>
+      </div>
+    </div>
+
+    <!-- แผงเปรียบเทียบยอดขายรายเดือน (Monthly Breakdown ประจำปี) -->
+    <div class="panel" id="analytics-monthly-panel" style="margin-bottom: 20px; display: none;">
+      <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>ยอดขายแยกตามรายเดือน (ประจำปี <span id="analytics-monthly-year-title"></span>)</span>
+        <span style="font-size:12px; color:var(--muted); font-weight:400;">คลิกที่เดือนเพื่อกรองดูรายละเอียดของเดือนนั้นได้</span>
+      </div>
+      <div style="padding: 16px;">
+        <div id="analytics-monthly-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;"></div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+      <!-- อันดับยอดขายทุกเมนูในร้าน -->
+      <div class="panel">
+        <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>อันดับยอดขายทุกเมนูในร้าน (Menu Rankings)</span>
+          <span class="count" id="analytics-menu-count"></span>
+        </div>
+        <div style="padding: 16px; max-height: 480px; overflow-y: auto;" id="analytics-top-items">
+          <div style="text-align: center; color: var(--muted); padding: 20px;">กำลังวิเคราะห์ข้อมูล...</div>
+        </div>
+      </div>
+
+      <!-- สัดส่วนช่องทางชำระเงิน -->
+      <div class="panel">
+        <div class="panel-head">ช่องทางการชำระเงิน (Payment Share)</div>
+        <div style="padding: 16px;" id="analytics-payment">
+          <div style="text-align: center; color: var(--muted); padding: 20px;">กำลังวิเคราะห์ข้อมูล...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ประวัติการขาย -->
+  <section class="view pad" id="view-orders" hidden>
+    <div class="daybar">
+      <button class="day-nav" id="day-prev" type="button" aria-label="วันก่อนหน้า">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+      </button>
+      <input type="date" id="day-date" aria-label="เลือกวันที่">
+      <button class="day-nav" id="day-next" type="button" aria-label="วันถัดไป">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+      </button>
+      <button class="btn-line" id="day-today" type="button">วันนี้</button>
+      <span class="daybar-label" id="day-label"></span>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <small id="stat-sales-label">ยอดขายวันนี้</small>
+        <b id="stat-sales">฿0</b>
+      </div>
+      <div class="stat">
+        <small>จำนวนบิล</small>
+        <b id="stat-count">0</b>
+      </div>
+      <div class="stat">
+        <small>เฉลี่ยต่อบิล</small>
+        <b id="stat-avg">฿0</b>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><span id="orders-head">บิลของวันนี้</span> <span class="count" id="orders-count"></span></div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th class="l">เวลา</th>
+              <th class="l">เลขที่บิล</th>
+              <th class="l c-table">โต๊ะ / ลูกค้า</th>
+              <th class="l c-items">รายการ</th>
+              <th>ชำระโดย</th>
+              <th class="r">ยอดรวม</th>
+              <th style="text-align:center;">สลิป</th>
+            </tr>
+          </thead>
+          <tbody id="orders-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- เมนูและราคา -->
+  <section class="view pad" id="view-menu" hidden>
+    <div class="panel">
+      <div class="panel-head">รายการเมนู <span class="count" id="menu-count"></span></div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th class="c-img">รูป</th>
+              <th class="l">ชื่อเมนู</th>
+              <th class="l c-cat">หมวดหมู่</th>
+              <th class="r">ราคา</th>
+              <th>สถานะ</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="menu-rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== แผงบิล ===== -->
+<aside class="bill" id="bill">
+  <div class="bill-top">
+    <span class="bill-where">ในร้าน •</span>
+    <input id="table-no" placeholder="ระบุโต๊ะ / ชื่อลูกค้า" aria-label="โต๊ะ / ชื่อลูกค้า">
+    <button type="button" class="bill-clear" id="clear-cart-btn" disabled>ล้างบิล</button>
+  </div>
+
+  <div class="bill-card">
+    <div class="bill-items" id="bill-items"></div>
+
+    <div class="bill-sum" id="bill-sum" hidden>
+      <div><span>ยอดก่อนภาษี</span><b id="sum-net">฿0</b></div>
+      <div><span>ภาษีมูลค่าเพิ่ม (7%)</span><b id="sum-vat">฿0</b></div>
+      <div class="sum-note">ราคาเมนูรวมภาษีมูลค่าเพิ่มแล้ว</div>
+    </div>
+  </div>
+
+  <div class="bill-foot">
+    <div class="bill-pay" id="bill-pay">
+      <button type="button" data-pay="เงินสด" class="on">เงินสด</button>
+      <button type="button" data-pay="โอนเงิน">โอนเงิน</button>
+    </div>
+    <button class="btn-solid btn-pay" id="checkout-btn" disabled>ชำระเงิน ฿0</button>
+  </div>
+</aside>
+
+<!-- ===== เพิ่ม / แก้ไขเมนู ===== -->
+<div class="scrim" id="menu-modal">
+  <div class="dlg">
+    <div class="dlg-head">
+      <b id="menu-modal-title">เพิ่มเมนู</b>
+      <button class="x" data-close="menu-modal" aria-label="ปิด">✕</button>
+    </div>
+    <form class="dlg-body" id="menu-form">
+      <input type="hidden" id="menu-id">
+      <label class="fld"><span>ชื่อเมนู</span><input id="menu-name" placeholder="เช่น ชาไทยเย็น"></label>
+      <div class="fld-2">
+        <label class="fld"><span>หมวดหมู่</span><input id="menu-category" list="cat-options" placeholder="เช่น เครื่องดื่ม"><datalist id="cat-options"></datalist></label>
+        <label class="fld"><span>ราคา (บาท)</span><input id="menu-price" type="number" min="0" step="0.01" placeholder="45"></label>
+      </div>
+      <div class="fld">
+        <span>รูปภาพเมนู</span>
+        <div class="pic">
+          <div class="pic-box" id="image-preview">ไม่มีรูป</div>
+          <div class="pic-act">
+            <input id="menu-image-input" type="file" accept="image/*" hidden>
+            <button type="button" class="btn-line" id="pick-image-btn">เลือกรูป</button>
+            <button type="button" class="btn-line" id="clear-image-btn" hidden>เอารูปออก</button>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn-line" data-close="menu-modal">ยกเลิก</button>
+        <button type="submit" class="btn-solid" id="menu-save-btn">บันทึกเมนู</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== ยืนยันการลบเมนู ===== -->
+<div class="scrim" id="delete-modal">
+  <div class="dlg dlg-sm">
+    <div class="dlg-head">
+      <b>ลบเมนู</b>
+      <button class="x" data-close="delete-modal" aria-label="ปิด">✕</button>
+    </div>
+    <div class="dlg-body">
+      <p class="dlg-msg">ต้องการลบ “<b id="delete-name"></b>” ออกจากระบบใช่หรือไม่<br>เมนูที่ลบแล้วจะกู้คืนไม่ได้</p>
+      <div class="dlg-foot">
+        <button type="button" class="btn-line" data-close="delete-modal">ยกเลิก</button>
+        <button type="button" class="btn-danger" id="delete-confirm-btn">ลบเมนู</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== หน้าต่างชำระเงิน / เช็กบิลโต๊ะ (Custom Modal สวยงาม พร้อมระบบคำนวณเงินทอน) ===== -->
+<div class="scrim" id="table-checkout-modal">
+  <div class="dlg dlg-sm" style="text-align: center;">
+    <div class="dlg-head" style="justify-content: center; position: relative;">
+      <b style="font-size: 18px;" id="modal-table-title">เช็กบิล โต๊ะ</b>
+      <button class="x" data-close="table-checkout-modal" aria-label="ปิด" style="position: absolute; right: 14px;">✕</button>
+    </div>
+    <div class="dlg-body" style="padding: 20px 24px;">
+      <div style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">ยอดชำระสุทธิ</div>
+      <div style="font-size: 32px; font-weight: 700; color: var(--orange); margin-bottom: 16px;" id="modal-table-amount">฿0</div>
+
+      <div id="checkout-method-selector">
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--ink);">เลือกวิธีการชำระเงิน</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <button type="button" id="btn-pay-cash" style="height: auto; min-height: 80px; padding: 14px 8px; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: normal; transition: all .15s ease;">
+            <span style="font-size: 18px; font-weight: 800; color: #10b981;">CASH</span>
+            <span style="line-height: 1.2;">เงินสด</span>
+          </button>
+          <button type="button" id="btn-pay-qr" style="height: auto; min-height: 80px; padding: 14px 8px; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: normal; transition: all .15s ease;">
+            <span style="font-size: 18px; font-weight: 800; color: #3b82f6;">QR PAY</span>
+            <span style="line-height: 1.2;">สแกน QR / โอน</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- แผงคำนวณเงินสดและเงินทอน -->
+      <div id="checkout-cash-panel" style="display: none; text-align: left; background: #f8fafc; border-radius: 12px; padding: 14px; margin-bottom: 16px; border: 1px solid #e2e8f0;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--ink);">
+          จำนวนเงินสดที่รับมา (บาท):
+        </label>
+        <input type="number" id="input-cash-received" style="width: 100%; font-size: 20px; font-weight: 700; padding: 8px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; text-align: right;" placeholder="0.00">
+        
+        <div style="display: flex; gap: 6px; margin: 8px 0;" id="cash-quick-btns"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+          <span style="font-size: 14px; font-weight: 600; color: #475569;">เงินทอน:</span>
+          <b style="font-size: 20px; color: #10b981;" id="lbl-cash-change">฿0.00</b>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+          <button type="button" id="btn-back-from-cash" class="btn-line" style="flex: 1; height: 38px;">ย้อนกลับ</button>
+          <button type="button" id="btn-confirm-cash" class="btn-solid" style="flex: 2; height: 38px; background: #10b981; border: none;">ยืนยันรับเงินสด</button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-line" data-close="table-checkout-modal" style="width: 100%; height: 42px;">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== หน้าต่างแสดงสลิปใบเสร็จรับเงิน (Customer Receipt Modal - 80mm Thermal Slip) ===== -->
+<div class="scrim" id="receipt-modal">
+  <div class="dlg" style="max-width: 440px;">
+    <div class="dlg-head" style="justify-content: space-between;">
+      <b style="font-size: 16px;">ใบเสร็จรับเงิน (Customer Receipt)</b>
+      <button class="x" data-close="receipt-modal" aria-label="ปิด">✕</button>
+    </div>
+    <div class="dlg-body" style="padding: 16px 20px 20px; max-height: 82vh; overflow-y: auto;">
+      
+      <!-- Thermal Paper Slip Container -->
+      <div id="thermal-receipt-paper" style="background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 18px 16px; font-family: 'Courier New', Courier, monospace, sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.06); font-size: 13px; color: #1e293b;">
+        <!-- dynamic content -->
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
+        <button type="button" id="btn-print-receipt" class="btn-solid" style="background: #ff6b35; border: none; padding: 12px 10px; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          พิมพ์ใบเสร็จ (Print/PDF)
+        </button>
+        <button type="button" id="btn-print-kitchen-from-receipt" class="btn-line" style="padding: 12px 10px; font-size: 13.5px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          พิมพ์ใบส่งครัว
+        </button>
+      </div>
+
+      <div style="margin-top: 10px;">
+        <button type="button" class="btn-line" data-close="receipt-modal" style="width: 100%; height: 38px;">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== หน้าต่างตั้งค่า & ส่งสรุปยอด Discord (Discord Automation Modal) ===== -->
+<div class="scrim" id="discord-modal">
+  <div class="dlg" style="max-width: 540px;">
+    <div class="dlg-head">
+      <b>ตั้งค่า Discord Webhook แยกห้อง (Daily / Weekly / Monthly / Yearly)</b>
+      <button class="x" data-close="discord-modal" aria-label="ปิด">✕</button>
+    </div>
+    <div class="dlg-body" style="padding: 18px; max-height: 80vh; overflow-y: auto;">
+      <p style="font-size:12.5px; color:var(--muted); margin:0 0 14px 0;">
+        คัดลอก Webhook URL จากการตั้งค่าแต่ละห้องใน Discord (Integrations > Webhooks) มาวางแยกตามประเภทรายงานได้เลยครับ
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom: 14px;">
+        <label class="fld">
+          <span style="font-weight:600; font-size:12.5px; color:var(--ink); display:flex; align-items:center; gap:6px;">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#ff6b35;"></span>
+            1. ห้องสรุปรายวัน (Daily Channel)
+          </span>
+          <input type="text" id="discord-webhook-daily" placeholder="https://discord.com/api/webhooks/... (ห้องรายวัน)" style="font-size:12.5px; font-family:monospace;">
+        </label>
+
+        <label class="fld">
+          <span style="font-weight:600; font-size:12.5px; color:var(--ink); display:flex; align-items:center; gap:6px;">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#3b82f6;"></span>
+            2. ห้องสรุปรายสัปดาห์ (Weekly Channel)
+          </span>
+          <input type="text" id="discord-webhook-weekly" placeholder="https://discord.com/api/webhooks/... (ห้องรายสัปดาห์)" style="font-size:12.5px; font-family:monospace;">
+        </label>
+
+        <label class="fld">
+          <span style="font-weight:600; font-size:12.5px; color:var(--ink); display:flex; align-items:center; gap:6px;">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+            3. ห้องสรุปรายเดือน (Monthly Channel)
+          </span>
+          <input type="text" id="discord-webhook-monthly" placeholder="https://discord.com/api/webhooks/... (ห้องรายเดือน)" style="font-size:12.5px; font-family:monospace;">
+        </label>
+
+        <label class="fld">
+          <span style="font-weight:600; font-size:12.5px; color:var(--ink); display:flex; align-items:center; gap:6px;">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#eab308;"></span>
+            4. ห้องสรุปรายปี (Yearly Channel)
+          </span>
+          <input type="text" id="discord-webhook-yearly" placeholder="https://discord.com/api/webhooks/... (ห้องรายปี)" style="font-size:12.5px; font-family:monospace;">
+        </label>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <small style="color:var(--muted); font-size:11.5px;">ระบบจะจำลิงก์แยกแต่ละห้อง และยิงสรุปเข้าห้องนั้นๆ โดยเฉพาะ</small>
+        <button type="button" id="btn-save-discord-webhook" class="btn-solid" style="background:#5865F2; border:none; height:32px; padding:0 14px; font-size:12.5px;">
+          บันทึกลิงก์ทุกห้อง
+        </button>
+      </div>
+
+      <div style="border-top: 1px solid var(--line); padding-top: 14px; margin-bottom: 14px;">
+        <div style="font-weight:600; font-size:13px; margin-bottom:8px; color:var(--ink);">กดส่งรายงานสรุปยอดทันที (Manual Trigger)</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <button type="button" class="btn-line" id="btn-send-discord-daily" style="font-size:12.5px; padding:9px 6px;">
+            ส่งสรุปรายวัน (Daily)
+          </button>
+          <button type="button" class="btn-line" id="btn-send-discord-weekly" style="font-size:12.5px; padding:9px 6px;">
+            ส่งสรุปสัปดาห์นี้ (Weekly)
+          </button>
+          <button type="button" class="btn-line" id="btn-send-discord-monthly" style="font-size:12.5px; padding:9px 6px;">
+            ส่งสรุปเดือนนี้ (Monthly)
+          </button>
+          <button type="button" class="btn-line" id="btn-send-discord-yearly" style="font-size:12.5px; padding:9px 6px;">
+            ส่งสรุปปีนี้ (Yearly)
+          </button>
+        </div>
+        <div style="margin-top: 8px;">
+          <button type="button" class="btn-line" id="btn-test-discord-webhook" style="width:100%; font-size:12.5px; padding:8px 6px; color:var(--muted);">
+            ทดสอบการเชื่อมต่อส่งข้อความทุกห้อง
+          </button>
+        </div>
+      </div>
+
+      <div style="background:#f8fafc; border-radius:8px; padding:10px 12px; font-size:12px; color:#64748b; line-height:1.5;">
+        <b>กำหนดการส่งอัตโนมัติ (Automated Schedule 23:00 น.):</b><br>
+        • <b>ทุกคืน 23:00 น.</b> : ส่งการ์ดรายวัน (ครบทุกเมนู) เข้า <b>ห้องรายวัน</b><br>
+        • <b>ทุกคืนวันอาทิตย์</b> : ส่งการ์ดสรุปสัปดาห์ (จ.-อา.) เข้า <b>ห้องรายสัปดาห์</b><br>
+        • <b>ทุกคืนวันสิ้นเดือน</b> : ส่งการ์ดสรุปรายเดือน เข้า <b>ห้องรายเดือน</b><br>
+        • <b>ทุกคืนสิ้นปี (31 ธ.ค.)</b> : ส่งการ์ดผลประกอบการรายปี เข้า <b>ห้องรายปี</b>
+      </div>
+
+      <div class="dlg-foot" style="margin-top: 14px; padding: 0;">
+        <button type="button" class="btn-line" data-close="discord-modal" style="width:100%;">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="qrcode.min.js"></script>
+<script src="api.js?v=2.1"></script>
+<script src="script.js?v=2.5"></script>
+</body>
+</html>

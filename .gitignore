@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Large binaries (downloaded automatically or distributed via Releases)
+backend/cloudflared.exe
+cloudflared.exe
+cloudflared
+
+# Environment & temporary files
+.env
+.venv
+env/
+venv/
+*.log

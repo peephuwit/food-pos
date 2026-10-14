@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>สั่งอาหาร - ระบบ Food POS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Athiti:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #ff6b35;
+    --primary-dark: #e85923;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --success: #10b981;
+  }
+  *, html, body, button, input, select, textarea, div, span, p, b, h1, h2, h3, h4 {
+    box-sizing: border-box;
+    font-family: 'Athiti', system-ui, -apple-system, sans-serif !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+  
+  header {
+    background: #fff;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .table-badge {
+    background: #fff3ed;
+    color: var(--primary);
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    border: 1px solid #fed7aa;
+  }
+  
+  .category-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 13px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+  }
+  
+  .menu-list {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .menu-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .menu-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-right: 12px;
+    flex-shrink: 0;
+    background: #f1f5f9;
+  }
+  .menu-info { flex: 1; }
+  .menu-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .menu-price { font-size: 15px; color: var(--primary); font-weight: 700; }
+  
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .btn-circle.add {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+  .qty-num {
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
+    z-index: 20;
+  }
+  .btn-submit {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-submit:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+  }
+
+  /* Success Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    text-align: center;
+    max-width: 320px;
+    width: 100%;
+  }
+  .success-icon {
+    width: 60px;
+    height: 60px;
+    background: #dcfce7;
+    color: var(--success);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 16px;
+  }
+
+  .dining-type-bar {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
+  }
+  .dining-toggle {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .dining-toggle.active {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+    box-shadow: 0 2px 6px rgba(234, 88, 12, 0.22);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="img/cashier.png?v=2" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
+    <b style="font-size: 17px; font-weight: 700; color: #0f172a;">Food Menu</b>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px;">
+    <button type="button" onclick="openBillModal()" style="background:#fff; border:1px solid #cbd5e1; padding:6px 12px; border-radius:20px; font-size:12.5px; font-weight:700; color:#334155; display:flex; align-items:center; gap:4px; cursor:pointer;">
+      บิลของโต๊ะ
+    </button>
+    <div class="table-badge" id="table-display">กำลังโหลด...</div>
+  </div>
+</header>
+
+<!-- แถบเลือก: ทานที่ร้าน หรือ สั่งกลับบ้าน -->
+<div class="dining-type-bar">
+  <button type="button" class="dining-toggle active" id="btn-type-dinein" onclick="setOrderType('ทานที่ร้าน')">
+    ทานที่ร้าน
+  </button>
+  <button type="button" class="dining-toggle" id="btn-type-takeaway" onclick="setOrderType('สั่งกลับบ้าน')">
+    สั่งกลับบ้าน (ใส่กล่อง)
+  </button>
+</div>
+
+<div class="category-tabs" id="category-tabs">
+  <button class="tab-btn active" onclick="filterCategory('ทั้งหมด')">ทั้งหมด</button>
+</div>
+
+<main class="menu-list" id="menu-list">
+  <div style="text-align: center; padding: 40px; color: var(--text-muted);">กำลังโหลดเมนูอาหาร...</div>
+</main>
+
+<!-- แถบแนะนำเมนูพ่วงอัจฉริยะ (Smart Cross-selling Recommender) -->
+<div id="recommender-box" style="display: none; background: #fff8f5; border: 1.5px dashed #fed7aa; border-radius: 14px; margin: 12px 16px 20px; padding: 12px 14px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+    <span style="font-size: 13px; font-weight: 700; color: var(--primary);">ลูกค้าส่วนใหญ่มักสั่งคู่กับ:</span>
+    <span style="font-size: 11px; color: var(--text-muted);">AI แนะนำ</span>
+  </div>
+  <div id="recommender-items" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+    <!-- เมนูที่แนะนำจะแสดงตรงนี้ -->
+  </div>
+</div>
+
+<div class="cart-bar">
+  <div>
+    <div style="font-size: 12px; color: var(--text-muted);" id="cart-count">เลือก 0 รายการ</div>
+    <div style="font-size: 18px; font-weight: 700; color: var(--primary);" id="cart-total">฿0.00</div>
+  </div>
+  <button class="btn-submit" id="btn-submit" onclick="submitOrder()">เลือกเมนูอาหารก่อน</button>
+</div>
+
+<!-- Modal แจ้งเตือนเมื่อส่งออเดอร์สำเร็จ พร้อมสรุปรายการ -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal-card">
+    <div class="success-icon">✓</div>
+    <h3 style="margin-bottom: 6px;" id="success-modal-title">ส่งออเดอร์เข้าครัวแล้ว!</h3>
+    <div id="success-order-summary" style="margin: 12px 0;"></div>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;" id="success-modal-desc">
+      ครัวได้รับรายการแล้ว สามารถสั่งเพิ่มได้ตลอดเวลา และชำระเงินที่เคาน์เตอร์เมื่อทานเสร็จครับ
+    </p>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <button class="btn-submit" style="width: 100%;" onclick="closeModal()">สั่งอาหารเพิ่ม</button>
+      <button type="button" style="background:#f1f5f9; border:none; padding:10px; border-radius:12px; font-weight:600; color:#475569; font-size:13.5px; cursor:pointer;" onclick="closeModal(); openBillModal();">ดูบิลรวมทั้งหมดของโต๊ะ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal แสดงบิล / สลิปของโต๊ะ (Customer Table Bill) -->
+<div class="modal-overlay" id="bill-modal">
+  <div class="modal-card" style="max-width: 340px; text-align: left; padding: 20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px dashed #cbd5e1; padding-bottom:8px;">
+      <b style="font-size:16px;">บิลอาหาร <span id="bill-table-name">โต๊ะ</span></b>
+      <button onclick="closeBillModal()" style="background:none; border:none; font-size:18px; cursor:pointer; color:#94a3b8; padding:4px;">✕</button>
+    </div>
+    <div id="bill-items-container" style="max-height:220px; overflow-y:auto; margin-bottom:12px; font-size:13.5px;">
+      <!-- items -->
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1.5px dashed #cbd5e1; margin-bottom:14px;">
+      <span style="font-weight:700;">ยอดรวมปัจจุบัน:</span>
+      <b style="font-size:20px; color:var(--primary);" id="bill-total-amount">฿0.00</b>
+    </div>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; text-align:center;">
+      สามารถสั่งเพิ่มได้ตลอดเวลา ชำระเงินเมื่อทานเสร็จ
+    </p>
+    <button class="btn-submit" style="width: 100%;" onclick="closeBillModal()">ปิดหน้าต่าง</button>
+  </div>
+</div>
+
+<script src="api.js?v=2.1"></script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const tableParam = urlParams.get('table') || '1';
+  const tableName = 'โต๊ะ ' + tableParam;
+  document.getElementById('table-display').innerText = tableName;
+
+  let allMenuItems = [];
+  let cart = {}; // { id: qty }
+  let currentCategory = 'ทั้งหมด';
+  let currentOrderType = 'ทานที่ร้าน';
+
+  function setOrderType(type) {
+    currentOrderType = type;
+    const btnDinein = document.getElementById('btn-type-dinein');
+    const btnTakeaway = document.getElementById('btn-type-takeaway');
+    if (btnDinein) btnDinein.classList.toggle('active', type === 'ทานที่ร้าน');
+    if (btnTakeaway) btnTakeaway.classList.toggle('active', type === 'สั่งกลับบ้าน');
+    updateCartBar();
+  }
+
+  async function loadMenu() {
+    try {
+      allMenuItems = await API.getMenu();
+      renderCategories();
+      renderMenu();
+    } catch (e) {
+      document.getElementById('menu-list').innerHTML = 
+        `<div style="text-align:center; padding: 40px; color: red;">โหลดเมนูไม่สำเร็จ: ${e.message}</div>`;
+    }
+  }
+
+  function renderCategories() {
+    const cats = ['ทั้งหมด', ...new Set(allMenuItems.map(m => m.category).filter(Boolean))];
+    const container = document.getElementById('category-tabs');
+    container.innerHTML = cats.map(c => `
+      <button class="tab-btn ${c === currentCategory ? 'active' : ''}" onclick="filterCategory('${c}')">${c}</button>
+    `).join('');
+  }
+
+  function filterCategory(cat) {
+    currentCategory = cat;
+    renderCategories();
+    renderMenu();
+  }
+
+  function renderMenu() {
+    const list = document.getElementById('menu-list');
+    const items = currentCategory === 'ทั้งหมด' 
+      ? allMenuItems 
+      : allMenuItems.filter(m => m.category === currentCategory);
+
+    if (items.length === 0) {
+      list.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);">ไม่มีรายการในหมวดนี้</div>`;
+      return;
+    }
+
+    list.innerHTML = items.map(m => {
+      const qty = cart[m.id] || 0;
+      const imgSrc = m.image || m.imageUrl || '';
+      return `
+        <div class="menu-card">
+          ${imgSrc ? `<img src="${imgSrc}" class="menu-img" alt="${m.name}" loading="lazy">` : ''}
+          <div class="menu-info">
+            <div class="menu-name">${m.name}</div>
+            <div class="menu-price">฿${m.price.toFixed(2)}</div>
+          </div>
+          <div class="qty-ctrl">
+            ${qty > 0 ? `
+              <button class="btn-circle" onclick="changeQty(${m.id}, -1)">−</button>
+              <span class="qty-num">${qty}</span>
+            ` : ''}
+            <button class="btn-circle add" onclick="changeQty(${m.id}, 1)">+</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    updateCartBar();
+  }
+
+  function changeQty(id, delta) {
+    const current = cart[id] || 0;
+    const next = current + delta;
+    if (next <= 0) {
+      delete cart[id];
+    } else {
+      cart[id] = next;
+    }
+    renderMenu();
+  }
+
+  function updateCartBar() {
+    let totalItems = 0;
+    let totalPrice = 0;
+    for (const [id, qty] of Object.entries(cart)) {
+      const item = allMenuItems.find(m => String(m.id) === String(id));
+      if (item) {
+        totalItems += qty;
+        totalPrice += item.price * qty;
+      }
+    }
+
+    const typeTag = currentOrderType === 'สั่งกลับบ้าน' ? ' • สั่งกลับบ้าน' : '';
+    document.getElementById('cart-count').innerText = `เลือก ${totalItems} รายการ${typeTag}`;
+    document.getElementById('cart-total').innerText = `฿${totalPrice.toFixed(2)}`;
+    
+    const submitBtn = document.getElementById('btn-submit');
+    if (submitBtn) {
+      if (totalItems === 0) {
+        submitBtn.innerText = 'เลือกเมนูอาหารก่อน';
+        submitBtn.style.opacity = '0.7';
+        submitBtn.style.background = '#94a3b8';
+      } else {
+        submitBtn.innerText = `สั่งอาหาร (${totalItems} รายการ)`;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.background = 'var(--primary)';
+      }
+      submitBtn.disabled = false;
+    }
+
+    checkRecommendations();
+  }
+
+  let recommendDebounce = null;
+  function checkRecommendations() {
+    clearTimeout(recommendDebounce);
+    recommendDebounce = setTimeout(async () => {
+      const selectedNames = Object.keys(cart).map(id => {
+        const item = allMenuItems.find(m => String(m.id) === String(id));
+        return item ? item.name : null;
+      }).filter(Boolean);
+
+      const box = document.getElementById('recommender-box');
+      const itemsContainer = document.getElementById('recommender-items');
+
+      if (selectedNames.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+
+      try {
+        const recs = await API.getRecommendations(selectedNames);
+        if (recs && recs.length > 0) {
+          itemsContainer.innerHTML = recs.map(r => `
+            <button type="button" onclick="changeQty(${r.id}, 1)" style="border: 1px solid #fed7aa; background: #fff; border-radius: 20px; padding: 6px 12px; font-size: 13px; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text);">
+              <span>+ ${r.name}</span>
+              <span style="color: var(--primary);">฿${r.price.toFixed(0)}</span>
+            </button>
+          `).join('');
+          box.style.display = 'block';
+        } else {
+          box.style.display = 'none';
+        }
+      } catch (e) {
+        box.style.display = 'none';
+      }
+    }, 250);
+  }
+
+  async function submitOrder() {
+    const orderItems = [];
+    for (const [id, qty] of Object.entries(cart)) {
+      const item = allMenuItems.find(m => String(m.id) === String(id));
+      if (item) {
+        orderItems.push({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          qty: qty
+        });
+      }
+    }
+
+    if (orderItems.length === 0) {
+      alert('กรุณากดเครื่องหมาย + ที่เมนูอาหารเพื่อเลือกรายการอาหารก่อนกดสั่งครับ');
+      return;
+    }
+
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.innerText = 'กำลังส่ง...';
+
+    try {
+      const res = await API.orderFromTable(tableName, orderItems, currentOrderType);
+      if (res.success) {
+        cart = {};
+        renderMenu();
+
+        // แสดงสรุปรายการที่เพิ่งสั่งในหน้าต่างสำเร็จ
+        const summaryEl = document.getElementById('success-order-summary');
+        if (summaryEl) {
+          summaryEl.innerHTML = `
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px 14px; text-align:left; max-height:140px; overflow-y:auto;">
+              ${orderItems.map(it => `
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+                  <span>${it.name} <b style="color:var(--primary);">x${it.qty}</b></span>
+                  <span style="font-weight:600;">฿${(it.price * it.qty).toFixed(2)}</span>
+                </div>
+              `).join('')}
+              <div style="border-top:1px dashed #cbd5e1; margin-top:6px; padding-top:6px; display:flex; justify-content:space-between; font-weight:700; font-size:14px;">
+                <span>รวมรอบนี้ (${currentOrderType}):</span>
+                <span style="color:var(--primary);">฿${res.total ? res.total.toFixed(2) : '0.00'}</span>
+              </div>
+            </div>
+          `;
+        }
+
+        const titleEl = document.getElementById('success-modal-title');
+        const descEl = document.getElementById('success-modal-desc');
+        if (titleEl) {
+          titleEl.textContent = currentOrderType === 'สั่งกลับบ้าน' 
+            ? 'ส่งออเดอร์กลับบ้านเข้าครัวแล้ว!' 
+            : 'ส่งออเดอร์เข้าครัวแล้ว!';
+        }
+        if (descEl) {
+          descEl.textContent = currentOrderType === 'สั่งกลับบ้าน'
+            ? 'ครัวได้รับรายการแล้ว พ่อครัวจะบรรจุกล่อง/ถุงให้เรียบร้อย และสามารถชำระเงินที่เคาน์เตอร์ครับ'
+            : 'ครัวได้รับรายการแล้ว สามารถสั่งเพิ่มได้ตลอดเวลา และชำระเงินที่เคาน์เตอร์เมื่อทานเสร็จครับ';
+        }
+
+        document.getElementById('success-modal').classList.add('open');
+      } else {
+        alert(res.message || 'ส่งออเดอร์ไม่สำเร็จ');
+      }
+    } catch (e) {
+      alert('เกิดข้อผิดพลาด: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      updateCartBar();
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('success-modal').classList.remove('open');
+  }
+
+  async function openBillModal() {
+    document.getElementById('bill-table-name').textContent = tableName;
+    const container = document.getElementById('bill-items-container');
+    container.innerHTML = '<div style="text-align:center; padding:24px 10px; color:#94a3b8;">กำลังดึงข้อมูลบิล...</div>';
+    document.getElementById('bill-modal').classList.add('open');
+    try {
+      const tables = await API.getTables();
+      const myTable = (tables || []).find(t => t.table_name === tableName);
+      if (!myTable || !myTable.items || myTable.items.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:24px 10px; color:#94a3b8;">ยังไม่มีรายการอาหารที่สั่งในบิลนี้</div>';
+        document.getElementById('bill-total-amount').textContent = '฿0.00';
+        return;
+      }
+      container.innerHTML = myTable.items.map((it, idx) => `
+        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+          <span>${idx+1}. ${it.name} <b style="color:var(--primary);">x${it.qty}</b></span>
+          <span style="font-weight:600;">฿${(it.price * it.qty).toFixed(2)}</span>
+        </div>
+      `).join('');
+      document.getElementById('bill-total-amount').textContent = `฿${(myTable.activeBillTotal || 0).toFixed(2)}`;
+    } catch (e) {
+      container.innerHTML = `<div style="color:red; text-align:center; padding:10px;">โหลดบิลไม่สำเร็จ: ${e.message}</div>`;
+    }
+  }
+
+  function closeBillModal() {
+    document.getElementById('bill-modal').classList.remove('open');
+  }
+
+  loadMenu();
+</script>
+</body>
+</html>
