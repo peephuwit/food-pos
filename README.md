@@ -8,7 +8,7 @@
 
 สำหรับผู้ใช้งานบน Windows สามารถดาวน์โหลดเวอร์ชันสำเร็จรูปพร้อมเปิดใช้งานได้ทันที (ไม่ต้องติดตั้ง Python หรือโปรแกรมเสริม):
 
-[Download FoodPOS for Windows (.exe)](https://github.com/YOUR_USERNAME/food-pos/releases/latest)
+[Download FoodPOS for Windows (.exe)](https://github.com/peephuwit/food-pos/releases/latest)
 
 *(หมายเหตุ: แทนที่ `YOUR_USERNAME/food-pos` ด้วยชื่อ GitHub Repository ของคุณ)*
 
@@ -135,7 +135,7 @@ pip install pywebview pandas openpyxl matplotlib
 6. คลิก **Publish release**
 7. ผู้ใช้งานจะสามารถคลิกดาวน์โหลดเวอร์ชันล่าสุดได้ทันทีจากลิงก์:
    ```text
-   https://github.com/YOUR_USERNAME/food-pos/releases/latest
+   https://github.com/peephuwit/food-pos/releases/latest
    ```
 
 ---
