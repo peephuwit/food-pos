@@ -122,20 +122,8 @@ pip install pywebview pandas openpyxl matplotlib
 
 ---
 
-## การแจกจ่ายโปรแกรมผ่าน GitHub Releases (Distribution Guide)
 
-เพื่อความเป็นมืออาชีพและป้องกันไม่ให้ขนาด Repository บวมจากไฟล์ไบนารีขนาดใหญ่ ให้แจกจ่ายตัวโปรแกรมผ่านระบบ **GitHub Releases** แทนการคอมมิตไฟล์ `.exe` ขึ้น Git:
 
-1. บีบอัดโฟลเดอร์ `dist/FoodPOS/` ให้เป็นไฟล์ ZIP (เช่น `FoodPOS-Windows.zip`)
-2. เปิดหน้า Repository บน GitHub แล้วคลิกที่แท็บ **Releases** (อยู่ทางขวามือของหน้าจอ)
-3. คลิกปุ่ม **Draft a new release**
-4. กำหนดชื่อ Tag เช่น `v1.0.0` และพิมพ์รายละเอียดการอัปเดต (Release Notes)
-5. ลากไฟล์ `FoodPOS-Windows.zip` หรือ `FoodPOS.exe` มาวางในช่อง **Attach binaries by dropping them here or selecting them**
-6. คลิก **Publish release**
-7. ผู้ใช้งานจะสามารถคลิกดาวน์โหลดเวอร์ชันล่าสุดได้ทันทีจากลิงก์:
-   ```text
-   https://github.com/peephuwit/food-pos/releases/latest
-   ```
 
 ---
 
