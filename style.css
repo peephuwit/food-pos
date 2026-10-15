@@ -207,6 +207,7 @@ body:not(.guest) #login { display: none; }
   color: var(--side-fg);
   font: 500 14.5px var(--font);
   text-align: left;
+  white-space: nowrap;
   transition: background .15s, color .15s;
 }
 .side-nav button:hover { background: rgba(255, 255, 255, .05); color: #fff; }
@@ -460,8 +461,15 @@ body:not(.guest) #login { display: none; }
 .card-name {
   flex: 1;
   font-size: 13.5px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.35;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 36px;
 }
 
 .card-price {
@@ -565,6 +573,7 @@ body.no-bill .main { margin-right: 0; }
 
 .bill-where {
   flex: none;
+  white-space: nowrap;
   color: var(--orange);
   font-size: 14px;
   font-weight: 700;
@@ -583,6 +592,7 @@ body.no-bill .main { margin-right: 0; }
 
 .bill-clear {
   flex: none;
+  white-space: nowrap;
   height: 26px;
   padding: 0 10px;
   border: 1px solid var(--line);
@@ -744,6 +754,7 @@ body.no-bill .main { margin-right: 0; }
   background: var(--surface);
   color: var(--label);
   font: 500 13.5px var(--font);
+  white-space: nowrap;
   transition: background .15s, border-color .15s, color .15s;
 }
 .bill-pay button:hover { border-color: var(--faint); color: var(--ink); }
@@ -1209,29 +1220,18 @@ body.no-bill .main { margin-right: 0; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.err  { background: var(--red); }
 
-/* ── จอแคบ ────────────────────────────────────────────────── */
-@media (max-width: 1180px) {
-  /* แผงบิลกินที่มากไปเมื่อเนื้อที่เหลือน้อย ย้ายลงไปต่อท้ายเนื้อหาแทน */
-  :root { --bill-w: 0px; }
+/* ── การแสดงผลตามขนาดหน้าจอ (Responsive System) ────────────────────────── */
 
-  /* ปล่อย min-height ทิ้ง ไม่งั้นแผงบิลจะถูกดันลงไปต่ำกว่าจอเต็ม ๆ หนึ่งหน้า */
-  .main { margin-right: 0; min-height: 0; }
-
-  .bill {
-    position: static;
-    width: auto;
-    max-width: 560px;
-    margin: 0 18px 24px;
-    padding: 0;
+/* 1. จอแล็ปท็อป/จอขนาดกลาง (992px - 1180px): คงขนาดไซด์บาร์ 230px และแผงบิล 330px เดิม สเกลเฉพาะการ์ดอาหาร */
+@media (max-width: 1180px) and (min-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+    gap: 12px;
   }
-  body.no-bill .bill { display: none; }
-
-  .bill-card { min-height: 180px; }
-  .bill-items { max-height: 320px; }
 }
 
-@media (max-width: 900px) {
-  /* ไซด์บาร์เลิกค้างอยู่ข้าง ๆ กลายเป็นลิ้นชักที่เลื่อนออกมาเมื่อกดปุ่มสามขีด */
+/* 2. จอแท็บเล็ต/หน้าต่างแคบ (768px - 991px): ซ่อนไซด์บาร์เป็นเมนูสามขีด เพื่อให้แผงบิลคงขนาดเดิม 330px สวยงาม ไม่ล้นบรรทัด */
+@media (max-width: 991px) {
   .hamburger { display: flex; }
 
   .side {
@@ -1259,17 +1259,31 @@ body.no-bill .main { margin-right: 0; }
   .tbl td.c-items { min-width: 120px; }
 }
 
-@media (max-width: 620px) {
+/* 3. จอมือถือและหน้าจอแคบมาก (<= 767px): ปรับแผงบิลเต็มหน้าจอต่อท้ายเนื้อหา */
+@media (max-width: 767px) {
+  :root { --bill-w: 0px; }
+
+  .main { margin-right: 0; min-height: 0; }
+
+  .bill {
+    position: static;
+    width: auto;
+    max-width: 100%;
+    margin: 16px 12px 24px;
+    padding: 0;
+  }
+  body.no-bill .bill { display: none; }
+
+  .bill-card { min-height: 180px; }
+  .bill-items { max-height: 320px; }
+
   .grid { grid-template-columns: repeat(auto-fill, minmax(136px, 1fr)); gap: 10px; padding-inline: 12px; }
   .view.pad { padding-inline: 12px; }
-  .bill { margin-inline: 12px; }
   .bar { padding-inline: 12px; }
 
   .stats { grid-template-columns: 1fr; gap: 8px; }
   .stat b { font-size: 22px; }
 
-  /* ชื่อหน้าขึ้นบรรทัดของตัวเอง แล้วช่องค้นหากับปุ่มแบ่งบรรทัดถัดไป
-     ถ้าไม่ให้ wrap ช่องค้นหาจะถูกดันล้นออกนอกจอ */
   .bar-tools { flex-wrap: wrap; }
   .bar-tools h1 { flex: none; width: 100%; }
   .search { flex: 1; width: auto; }
@@ -1282,10 +1296,7 @@ body.no-bill .main { margin-right: 0; }
   .c-table,
   .c-cat { display: none; }
 
-  /* ปุ่มสามตัวเรียงแนวนอนจะล้นออกนอกจอจนปุ่มลบกดไม่ถึง */
   .acts { flex-direction: column; }
-
-  /* บีบให้คอลัมน์ที่เหลือลงจอพอดี ยอดรวมต้องเห็นโดยไม่ต้องเลื่อนตาราง */
   .tbl th, .tbl td { padding-inline: 8px; }
   .tbl td.t-id { white-space: normal; word-break: break-all; }
   .pill { min-width: 0; padding-inline: 9px; }

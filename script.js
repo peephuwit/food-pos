@@ -1165,12 +1165,20 @@ if (btnConfirmCash) {
       return;
     }
     var change = cash - _checkoutTargetAmount;
-    processTablePayment('เงินสด', cash, change);
+    if (window._checkoutIsCart) {
+      executeCartCheckout('เงินสด', cash, change);
+    } else {
+      processTablePayment('เงินสด', cash, change);
+    }
   });
 }
 
 $('btn-pay-qr').addEventListener('click', function () {
-  processTablePayment('โอนเงิน', _checkoutTargetAmount, 0);
+  if (window._checkoutIsCart) {
+    executeCartCheckout('โอนเงิน', _checkoutTargetAmount, 0);
+  } else {
+    processTablePayment('โอนเงิน', _checkoutTargetAmount, 0);
+  }
 });
 
 var btnPrintRec = $('btn-print-receipt');
@@ -1435,10 +1443,41 @@ function checkout() {
   if (!CART.length) return;
   if (!HAS_BACKEND) { toast('ยังไม่ได้เชื่อมต่อเซิร์ฟเวอร์', 'err'); return; }
 
+  var total = CART.reduce(function (sum, item) { return sum + (item.price * item.qty); }, 0);
   var table = $('table-no').value.trim() || 'สั่งกลับบ้าน / ไม่ระบุ';
+
+  window._checkoutIsCart = true;
+  _checkoutTargetTable = table;
+  _checkoutTargetAmount = total;
+
+  var titleEl = $('modal-table-title');
+  var amountEl = $('modal-table-amount');
+  if (titleEl) titleEl.textContent = 'ชำระเงิน: ' + table;
+  if (amountEl) amountEl.textContent = baht(_checkoutTargetAmount);
+
+  var methodSelector = $('checkout-method-selector');
+  var cashPanel = $('checkout-cash-panel');
+
+  if (PAYMENT === 'เงินสด') {
+    if (methodSelector) methodSelector.style.display = 'none';
+    if (cashPanel) cashPanel.style.display = 'block';
+    setupCashCalculator(_checkoutTargetAmount);
+    var input = $('input-cash-received');
+    if (input) setTimeout(function () { input.focus(); }, 100);
+  } else {
+    if (methodSelector) methodSelector.style.display = 'block';
+    if (cashPanel) cashPanel.style.display = 'none';
+  }
+
+  openModal('table-checkout-modal');
+}
+
+function executeCartCheckout(paymentMethod, cashReceived, change) {
+  closeModal('table-checkout-modal');
+  var table = _checkoutTargetTable || 'สั่งกลับบ้าน / ไม่ระบุ';
   var order = {
     tableName: table,
-    payment: PAYMENT,
+    payment: paymentMethod,
     items: CART.map(function (c) { return { name: c.name, price: c.price, qty: c.qty }; })
   };
 
@@ -1451,7 +1490,7 @@ function checkout() {
         $('checkout-btn').disabled = false;
         return;
       }
-      toast('บันทึกบิล ' + res.orderId + ' แล้ว');
+      toast('บันทึกบิล ' + (res.billNo || res.orderId) + ' เรียบร้อย');
       var boughtItems = CART.slice();
       CART = [];
       $('table-no').value = '';
@@ -1466,17 +1505,20 @@ function checkout() {
         table: res.table || table,
         time: res.time,
         total: res.total,
-        payment: res.payment || PAYMENT,
+        payment: paymentMethod,
         items: boughtItems,
-        cashReceived: res.total,
-        change: 0
+        cashReceived: cashReceived,
+        change: change
       });
     })
     .catch(function (e) {
       $('checkout-btn').disabled = false;
       console.error(e);
-      /* บิลอาจถูกบันทึกไปแล้วแต่คำตอบหายระหว่างทาง กดซ้ำทันทีจะได้บิลซ้ำ */
       toast('บันทึกบิลไม่สำเร็จ — ตรวจที่ประวัติการขายก่อนกดชำระเงินซ้ำ', 'err');
+    })
+    .finally(function () {
+      window._checkoutIsCart = false;
+      _checkoutTargetTable = null;
     });
 }
 
