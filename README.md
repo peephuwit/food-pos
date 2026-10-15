@@ -120,7 +120,7 @@ pip install pywebview pandas openpyxl matplotlib
    └── cloudflared.exe    # ไบนารีเชื่อมต่อระบบสั่งอาหาร 4G/5G
    ```
 
----
+
 
 
 
