@@ -10,7 +10,6 @@
 
 [Download FoodPOS for Windows (.exe)](https://github.com/peephuwit/food-pos/releases/latest)
 
-*(หมายเหตุ: แทนที่ `YOUR_USERNAME/food-pos` ด้วยชื่อ GitHub Repository ของคุณ)*
 
 ---
 
