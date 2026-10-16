@@ -24,6 +24,9 @@
 | **macOS 11+** | [FoodPOS for macOS (.dmg)](https://github.com/peephuwit/food-pos/releases/latest) | Apple Disk Image (`.dmg`) ลากเข้า Applications |
 | **macOS 11+** | [FoodPOS for macOS (.zip)](https://github.com/peephuwit/food-pos/releases/latest) | Compressed Archive (`.zip`) แตกไฟล์แล้วเปิดแอพได้ทันที |
 
+> **💡 หมายเหตุสำหรับ macOS:** หากเปิดใช้งานครั้งแรกแล้วระบบขึ้นเตือนว่า *"Apple could not verify..."* 
+> ให้เข้าไปที่ **System Settings (การตั้งค่าระบบ)** ➔ **Privacy & Security (ความเป็นส่วนตัวและความปลอดภัย)** ➔ เลื่อนลงมาที่หัวข้อ Security แล้วกดปุ่ม **"Open Anyway"** (ทำเพียงครั้งแรกครั้งเดียว) หรือเปิด Terminal แล้วรันคำสั่ง: `xattr -cr /Applications/FoodPOS.app`
+
 
 ---
 
