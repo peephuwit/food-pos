@@ -24,8 +24,17 @@
 | **macOS 11+** | [FoodPOS for macOS (.dmg)](https://github.com/peephuwit/food-pos/releases/latest) | Apple Disk Image (`.dmg`) ลากเข้า Applications |
 | **macOS 11+** | [FoodPOS for macOS (.zip)](https://github.com/peephuwit/food-pos/releases/latest) | Compressed Archive (`.zip`) แตกไฟล์แล้วเปิดแอพได้ทันที |
 
-> **💡 หมายเหตุสำหรับ macOS:** หากเปิดใช้งานครั้งแรกแล้วระบบขึ้นเตือนว่า *"Apple could not verify..."* 
-> ให้เข้าไปที่ **System Settings (การตั้งค่าระบบ)** ➔ **Privacy & Security (ความเป็นส่วนตัวและความปลอดภัย)** ➔ เลื่อนลงมาที่หัวข้อ Security แล้วกดปุ่ม **"Open Anyway"** (ทำเพียงครั้งแรกครั้งเดียว) หรือเปิด Terminal แล้วรันคำสั่ง: `xattr -cr /Applications/FoodPOS.app`
+> [!NOTE]
+> ### 💡 วิธีเปิดใช้งานครั้งแรกบน macOS (First Launch on macOS)
+> ในการเปิดใช้งานครั้งแรก หาก macOS มีหน้าต่างขึ้นเตือนว่า *"Apple could not verify 'FoodPOS' is free of malware..."* ให้ทำตามขั้นตอนง่ายๆ ดังนี้ (ทำเพียงครั้งแรกครั้งเดียว):
+> 
+> 1. เมื่อมีหน้าต่างเตือนเด้งขึ้นมา ให้กดปุ่ม **"Done"** (อย่ากด Move to Trash)
+> 2. ไปที่ **System Settings (การตั้งค่าระบบ)** ➔ เลือกเมนู **Privacy & Security (ความเป็นส่วนตัวและความปลอดภัย)**
+> 3. เลื่อนลงมาที่หัวข้อ **Security (ความปลอดภัย)** จะเห็นข้อความระบุว่า `"FoodPOS" was blocked from use...`
+> 4. คลิกปุ่ม **"Open Anyway" (เปิดต่อไป)** แล้วใส่รหัสผ่านเครื่อง Mac หรือสแกน Touch ID
+> 5. โปรแกรมจะเปิดขึ้นมาใช้งานได้ทันที และครั้งต่อไปจะดับเบิลคลิกเปิดได้ตลอดไปโดยไม่ขึ้นเตือนอีกครับ
+> 
+> *(หรือสำหรับผู้ใช้สายคำสั่ง สามารถเปิด Terminal แล้วรัน: `xattr -cr /Applications/FoodPOS.app`)*
 
 
 ---
