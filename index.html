@@ -137,7 +137,7 @@
       <button class="btn-line" onclick="loadTablesView()" style="font-size:13px; padding:6px 14px;">รีเฟรชสถานะ</button>
     </div>
     
-    <div id="tables-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px; margin-bottom:24px;">
+    <div id="tables-grid" style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:14px; margin-bottom:24px;">
       <!-- โต๊ะจะถูกเรนเดอร์ตรงนี้ -->
     </div>
 
@@ -147,7 +147,7 @@
         <span>QR Code & ลิงก์สั่งอาหารสำหรับลูกค้า (Table QR Ordering)</span>
         <span style="font-size:12px; color:var(--muted); font-weight:400;">ลูกค้าสแกนด้วยมือถือผ่าน WiFi เดียวกัน หรือคลิกเพื่อทดสอบเปิดสั่งอาหาร</span>
       </div>
-      <div id="table-qr-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px;">
+      <div id="table-qr-grid" style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:14px;">
         <!-- การ์ด QR Code ของแต่ละโต๊ะจะถูกสร้างตรงนี้ -->
       </div>
     </div>
@@ -155,76 +155,74 @@
 
   <!-- สถิติยอดขาย & AI Analytics -->
   <section class="view pad" id="view-analytics" hidden>
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
-      <h2 style="font-size:18px; font-weight:700;">ภาพรวมสถิติยอดขาย & การวิเคราะห์ (Sales Analytics)</h2>
-      
-      <!-- แถบเลือกช่วงเวลา: ทั้งหมด, วันนี้, สัปดาห์นี้, ปีนี้, ระบุวัน, ระบุเดือน, ระบุปี -->
-      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-        <div style="display:flex; gap:4px; background:#fff; padding:4px; border-radius:10px; border:1px solid var(--line);">
-          <button type="button" class="analytics-filter-btn on" data-period="all" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">ทั้งหมด</button>
-          <button type="button" class="analytics-filter-btn" data-period="today" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">วันนี้</button>
-          <button type="button" class="analytics-filter-btn" data-period="this_week" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">สัปดาห์นี้ (จ.-อา.)</button>
-          <button type="button" class="analytics-filter-btn" data-period="this_year" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label);">ปีนี้</button>
-        </div>
+    <h2 style="font-size:16px; font-weight:700; margin:0 0 12px; color:var(--ink);">ภาพรวมสถิติยอดขาย & การวิเคราะห์ (Sales Analytics)</h2>
+    
+    <!-- แถบเลือกช่วงเวลา: ทั้งหมด, วันนี้, สัปดาห์นี้, ปีนี้, ระบุวัน, ระบุเดือน, ระบุปี -->
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; width:100%;">
+      <div style="display:flex; gap:4px; background:#fff; padding:4px; border-radius:10px; border:1px solid var(--line); flex-shrink:0;">
+        <button type="button" class="analytics-filter-btn on" data-period="all" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label); white-space:nowrap;">ทั้งหมด</button>
+        <button type="button" class="analytics-filter-btn" data-period="today" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label); white-space:nowrap;">วันนี้</button>
+        <button type="button" class="analytics-filter-btn" data-period="this_week" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label); white-space:nowrap;">สัปดาห์นี้ (จ.-อา.)</button>
+        <button type="button" class="analytics-filter-btn" data-period="this_year" style="padding:6px 12px; border-radius:8px; border:none; background:transparent; font-size:13px; font-weight:600; cursor:pointer; color:var(--label); white-space:nowrap;">ปีนี้</button>
+      </div>
 
-        <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line);">
-          <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุวัน:</span>
-          <input type="date" id="analytics-date-picker" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none;">
-        </div>
+      <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line); flex-shrink:0; white-space:nowrap;">
+        <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุวัน:</span>
+        <input type="date" id="analytics-date-picker" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none;">
+      </div>
 
-        <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line);">
-          <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุเดือน:</span>
-          <input type="month" id="analytics-month-picker" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none;">
-        </div>
+      <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line); flex-shrink:0; white-space:nowrap;">
+        <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุเดือน:</span>
+        <input type="month" id="analytics-month-picker" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none;">
+      </div>
 
-        <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line);">
-          <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุปี:</span>
-          <select id="analytics-year-select" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none; background:#fff; cursor:pointer;">
-            <option value="">เลือกปี...</option>
-          </select>
-        </div>
+      <div style="display:flex; align-items:center; gap:6px; background:#fff; padding:4px 8px; border-radius:10px; border:1px solid var(--line); flex-shrink:0; white-space:nowrap;">
+        <span style="font-size:12px; color:var(--muted); font-weight:600;">ระบุปี:</span>
+        <select id="analytics-year-select" style="border:1px solid var(--line); border-radius:6px; padding:4px 8px; font-size:13px; font-family:inherit; color:var(--ink); outline:none; background:#fff; cursor:pointer;">
+          <option value="">เลือกปี...</option>
+        </select>
+      </div>
 
-        <!-- เครื่องมือสำรองข้อมูล & รีเซ็ตข้อมูลทดสอบ & Discord Automation -->
-        <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
-          <button type="button" id="btn-open-discord-modal" class="btn-solid" style="padding:6px 12px; font-size:12.5px; height:auto; background:#5865F2; border:none;" title="ตั้งค่า Discord Webhook และส่งรายงานสรุปยอดขาย">
-            Discord สรุปยอด
-          </button>
-          <a href="http://localhost:8000/backup-database" download class="btn-line" style="padding:6px 12px; font-size:12.5px; height:auto; text-decoration:none; display:inline-flex; align-items:center; gap:5px; color:var(--ink);" title="ดาวน์โหลดไฟล์สำรองข้อมูลเป็น Excel (.xlsx)">
-            สำรองฐานข้อมูล (Excel)
-          </a>
-          <button type="button" id="btn-reset-test-data" class="btn-line" style="padding:6px 12px; font-size:12.5px; height:auto; color:var(--red); border-color:#fecaca;" title="ล้างบิลทดสอบทั้งหมดก่อนเปิดร้านจริง">
-            ล้างข้อมูลทดสอบ
-          </button>
-        </div>
+      <!-- เครื่องมือสำรองข้อมูล & รีเซ็ตข้อมูลทดสอบ & Discord Automation -->
+      <div style="display:flex; align-items:center; gap:6px; margin-left:auto; flex-shrink:0; white-space:nowrap;">
+        <button type="button" id="btn-open-discord-modal" class="btn-solid" style="padding:6px 12px; font-size:12.5px; height:auto; background:#5865F2; border:none; white-space:nowrap;" title="ตั้งค่า Discord Webhook และส่งรายงานสรุปยอดขาย">
+          Discord สรุปยอด
+        </button>
+        <a href="http://localhost:8000/backup-database" download class="btn-line" style="padding:6px 12px; font-size:12.5px; height:auto; text-decoration:none; display:inline-flex; align-items:center; gap:5px; color:var(--ink); white-space:nowrap;" title="ดาวน์โหลดไฟล์สำรองข้อมูลเป็น Excel (.xlsx)">
+          สำรองฐานข้อมูล (Excel)
+        </a>
+        <button type="button" id="btn-reset-test-data" class="btn-line" style="padding:6px 12px; font-size:12.5px; height:auto; color:var(--red); border-color:#fecaca; white-space:nowrap;" title="ล้างบิลทดสอบทั้งหมดก่อนเปิดร้านจริง">
+          ล้างข้อมูลทดสอบ
+        </button>
       </div>
     </div>
 
-    <!-- สรุปตัวเลขสำคัญ (ยอดรวม, เงินสด, โอนเงิน/สแกน QR, บิลทั้งหมด, เฉลี่ยต่อบิล) -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
+    <!-- สรุปตัวเลขสำคัญ 5 ตัวเลขในแถวเดียวเสมอ (ยอดรวม, เงินสด, โอนเงิน/สแกน QR, บิลทั้งหมด, เฉลี่ยต่อบิล) -->
+    <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px;">
       <div class="stat">
         <small id="analytics-revenue-label">ยอดขายรวม</small>
         <b id="analytics-revenue">฿0</b>
       </div>
       <div class="stat" style="border-left: 3px solid #10b981;">
-        <small style="display:flex; align-items:center; gap:6px;">
-          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981;"></span>
+        <small style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; flex-shrink:0;"></span>
           ยอดเงินสด
         </small>
         <b id="analytics-cash" style="color: #10b981;">฿0</b>
       </div>
       <div class="stat" style="border-left: 3px solid #3b82f6;">
-        <small style="display:flex; align-items:center; gap:6px;">
-          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#3b82f6;"></span>
+        <small style="display:flex; align-items:center; gap:6px; white-space:nowrap;">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#3b82f6; flex-shrink:0;"></span>
           ยอดโอนเงิน / QR
         </small>
         <b id="analytics-transfer" style="color: #3b82f6;">฿0</b>
       </div>
       <div class="stat">
-        <small>จำนวนบิลที่ปิดการขาย</small>
+        <small style="white-space:nowrap;">จำนวนบิลที่ปิดการขาย</small>
         <b id="analytics-bills" style="color: var(--ink);">0 บิล</b>
       </div>
       <div class="stat">
-        <small>ยอดเฉลี่ยต่อบิล (Avg Ticket)</small>
+        <small style="white-space:nowrap;">ยอดเฉลี่ยต่อบิล (Avg Ticket)</small>
         <b id="analytics-avg" style="color: var(--side-hi);">฿0</b>
       </div>
     </div>
@@ -251,7 +249,7 @@
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px;">
       <!-- อันดับยอดขายทุกเมนูในร้าน -->
       <div class="panel">
         <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center;">

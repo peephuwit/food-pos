@@ -45,8 +45,8 @@
   --red-sf:     #fdecea;
 
   --radius:     6px;
-  --side-w:     230px;
-  --bill-w:     330px;
+  --side-w:     clamp(190px, 16vw, 220px);
+  --bill-w:     clamp(280px, 24vw, 330px);
   --bar-h:      74px;
 
   --font: 'Athiti', system-ui, -apple-system, 'Segoe UI', 'Leelawadee UI',
@@ -414,9 +414,9 @@ body:not(.guest) #login { display: none; }
 /* ── การ์ดเมนู ────────────────────────────────────────────── */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
-  gap: 14px;
-  padding: 4px 18px 24px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(8px, 1vw, 14px);
+  padding: 4px clamp(10px, 1.2vw, 18px) 24px;
 }
 
 .card {
@@ -455,12 +455,12 @@ body:not(.guest) #login { display: none; }
   flex-direction: column;
   gap: 2px;
   flex: 1;
-  padding: 9px 11px 11px;
+  padding: clamp(6px, 0.8vw, 10px);
 }
 
 .card-name {
   flex: 1;
-  font-size: 13.5px;
+  font-size: clamp(12px, 0.92vw, 13.5px);
   font-weight: 600;
   line-height: 1.35;
   color: var(--ink);
@@ -469,11 +469,11 @@ body:not(.guest) #login { display: none; }
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-height: 36px;
+  min-height: 34px;
 }
 
 .card-price {
-  font-size: 13.5px;
+  font-size: clamp(12.5px, 0.95vw, 14px);
   font-weight: 600;
   color: var(--orange);
   font-variant-numeric: tabular-nums;
@@ -484,11 +484,11 @@ body:not(.guest) #login { display: none; }
   position: absolute;
   top: 0;
   right: 0;
-  min-width: 28px;
-  padding: 4px 7px;
+  min-width: 24px;
+  padding: 3px 6px;
   background: var(--orange);
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-align: center;
   font-variant-numeric: tabular-nums;
@@ -823,26 +823,35 @@ body.no-bill .main { margin-right: 0; }
 .stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: clamp(8px, 1vw, 12px);
   margin-bottom: 14px;
 }
 
 .stat {
-  padding: 14px 18px;
+  padding: clamp(10px, 1vw, 14px) clamp(10px, 1.2vw, 18px);
   border-radius: var(--radius);
   background: var(--surface);
+  min-width: 0;
 }
 
-.stat small { display: block; font-size: 12.5px; color: var(--muted); }
+.stat small {
+  display: block;
+  font-size: clamp(11.5px, 0.9vw, 12.5px);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .stat b {
   display: block;
   margin-top: 1px;
-  font-size: 25px;
+  font-size: clamp(18px, 1.6vw, 25px);
   font-weight: 700;
   line-height: 1.25;
   color: var(--orange);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .panel {
@@ -1222,16 +1231,15 @@ body.no-bill .main { margin-right: 0; }
 
 /* ── การแสดงผลตามขนาดหน้าจอ (Responsive System) ────────────────────────── */
 
-/* 1. จอแล็ปท็อป/จอขนาดกลาง (992px - 1180px): คงขนาดไซด์บาร์ 230px และแผงบิล 330px เดิม สเกลเฉพาะการ์ดอาหาร */
-@media (max-width: 1180px) and (min-width: 992px) {
+/* 1. หน้าจอคอมพิวเตอร์และแล็ปท็อปทุกขนาด (>= 900px): ล็อก 5 คอลัมน์ ไม่ดันบรรทัด ปรับสัดส่วนตามขนาดหน้าจอ */
+@media (min-width: 900px) {
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }
 
-/* 2. จอแท็บเล็ต/หน้าต่างแคบ (768px - 991px): ซ่อนไซด์บาร์เป็นเมนูสามขีด เพื่อให้แผงบิลคงขนาดเดิม 330px สวยงาม ไม่ล้นบรรทัด */
-@media (max-width: 991px) {
+/* 2. จอแท็บเล็ต/หน้าต่างแคบ (768px - 899px): ซ่อนไซด์บาร์เป็นเมนูสามขีด เพื่อให้แผงบิลคงขนาดเดิม สวยงาม ไม่ล้นบรรทัด */
+@media (max-width: 899px) {
   .hamburger { display: flex; }
 
   .side {
