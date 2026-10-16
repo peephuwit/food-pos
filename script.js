@@ -1914,4 +1914,9 @@ var SAVED = HAS_BACKEND ? loadSession() : null;
 if (SAVED) {
   ME = SAVED;
   enterApp(true);
+} else {
+  // สำหรับเครื่องแคชเชียร์หน้าร้าน: เข้าสู่ระบบ admin อัตโนมัติทันที
+  ME = { username: 'admin', role: 'Admin' };
+  saveSession();
+  enterApp(true);
 }

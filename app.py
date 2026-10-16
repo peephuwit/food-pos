@@ -36,9 +36,14 @@ sys.path.insert(0, str(BUNDLE_DIR))
 sys.path.insert(0, str(BASE_DIR))
 
 PORT = 8000
-SERVER_URL = f"http://localhost:{PORT}"
+SERVER_URL = f"http://127.0.0.1:{PORT}"
 APP_TITLE = "Food POS — ระบบจัดการร้านอาหาร & แคชเชียร์"
 ICON_PATH = BUNDLE_DIR / "img" / "icon.ico"
+
+try:
+    import backend.server
+except ImportError:
+    pass
 
 def log_error(err):
     try:
@@ -48,11 +53,11 @@ def log_error(err):
         pass
 
 def is_server_running(port=PORT):
-    """ตรวจสอบว่า Backend Server รันอยู่แล้วหรือไม่ผ่าน Socket Connect"""
+    """ตรวจสอบว่า Backend Server รันและตอบสนอง HTTP สำเร็จหรือไม่"""
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.settimeout(0.5)
-            return s.connect_ex(('127.0.0.1', port)) == 0
+        import urllib.request
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=1.0) as r:
+            return r.status == 200
     except Exception:
         return False
 
@@ -101,7 +106,7 @@ def main():
         min_size=(1024, 680),
         resizable=True,
         fullscreen=False,
-        background_color='#0f172a',
+        background_color='#ffffff',
         text_select=True,
         zoomable=True
     )
