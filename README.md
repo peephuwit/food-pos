@@ -6,9 +6,23 @@
 
 ### ดาวน์โหลดโปรแกรมพร้อมใช้งาน (Quick Download)
 
-สำหรับผู้ใช้งานบน Windows สามารถดาวน์โหลดเวอร์ชันสำเร็จรูปพร้อมเปิดใช้งานได้ทันที (ไม่ต้องติดตั้ง Python หรือโปรแกรมเสริม):
+สามารถดาวน์โหลดเวอร์ชันสำเร็จรูปไปเปิดใช้งานได้ทันที โดยไม่ต้องติดตั้ง Python หรือโปรแกรมเสริมใดๆ:
 
-[Download FoodPOS for Windows (.exe)](https://github.com/peephuwit/food-pos/releases/latest)
+<p align="center">
+  <a href="https://github.com/peephuwit/food-pos/releases/latest">
+    <img src="https://img.shields.io/badge/Download-Windows_(.exe)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/peephuwit/food-pos/releases/latest">
+    <img src="https://img.shields.io/badge/Download-macOS_(.dmg)-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for macOS" />
+  </a>
+</p>
+
+| ระบบปฏิบัติการ | ไฟล์ติดตั้ง | รูปแบบ |
+| :--- | :--- | :--- |
+| **Windows 10 / 11** | [FoodPOS for Windows](https://github.com/peephuwit/food-pos/releases/latest) | Single-file Portable (`.exe`) |
+| **macOS 11+** | [FoodPOS for macOS (.dmg)](https://github.com/peephuwit/food-pos/releases/latest) | Apple Disk Image (`.dmg`) ลากเข้า Applications |
+| **macOS 11+** | [FoodPOS for macOS (.zip)](https://github.com/peephuwit/food-pos/releases/latest) | Compressed Archive (`.zip`) แตกไฟล์แล้วเปิดแอพได้ทันที |
 
 
 ---
@@ -48,9 +62,10 @@
 ```text
 food-pos/
 ├── app.py                   # Desktop App Launcher (pywebview)
-├── Build_EXE.bat            # สคริปต์คอมไพล์เป็น FoodPOS.exe ตัวเดียว
+├── Build_EXE.bat            # สคริปต์คอมไพล์เป็น FoodPOS.exe บน Windows
+├── Build_DMG.sh             # สคริปต์คอมไพล์เป็น FoodPOS.dmg บน macOS
 ├── Start_POS.bat            # สคริปต์รันบน Windows (โหมดพัฒนา)
-├── Start_POS.command        # สคริปต์รันบน macOS
+├── Start_POS.command        # สคริปต์รันบน macOS (โหมดพัฒนา)
 ├── index.html               # หน้าหลักแคชเชียร์ (POS Dashboard)
 ├── order.html               # หน้าระบบลูกค้าสแกนสั่งอาหาร (Mobile Web)
 ├── kitchen.html             # หน้าระบบจอแสดงผลในครัว (KDS)
@@ -58,6 +73,7 @@ food-pos/
 ├── script.js                # ลอจิกการทำงานฝั่ง Frontend
 ├── api.js                   # ตัวเชื่อมต่อ API กับ Backend
 ├── qrcode.min.js            # ไลบรารีสร้าง QR Code ฝั่งเบราว์เซอร์
+├── img/                     # โฟลเดอร์รูปภาพ เมนู และไอคอน (.ico / .icns)
 └── backend/
     ├── server.py            # HTTP & REST API Server (Python Multi-threaded)
     ├── pos.db               # ฐานข้อมูล SQLite (เมนู, โต๊ะ, ยอดขาย)
@@ -106,6 +122,22 @@ pip install pywebview pandas openpyxl matplotlib
 
 ---
 
+## การสร้างแอพสำเร็จรูปสำหรับ macOS (Apple Disk Image .dmg)
+
+โปรเจกต์นี้มีสคริปต์คอมไพล์เป็นตัวติดตั้ง `.dmg` ที่พร้อมลากเข้า `Applications` โดยรวม `cloudflared` และจัดการสิทธิ์ความปลอดภัยให้เรียบร้อย:
+
+1. เปิด Terminal ในโฟลเดอร์โปรเจกต์
+2. สั่งรันสคริปต์:
+   ```bash
+   ./Build_DMG.sh
+   ```
+3. เมื่อเสร็จสิ้น จะได้ไฟล์ตัวติดตั้งสำเร็จรูปที่:
+   ```text
+   dist/FoodPOS.dmg
+   ```
+
+---
+
 ## การสร้างแอพสำเร็จรูปสำหรับ Windows (Standalone .exe)
 
 โปรเจกต์นี้รองรับการรวมไฟล์ทั้งหมดเป็นไฟล์โปรแกรมพกพา (Portable Single-file Executable) โดยไม่ต้องติดตั้ง Python บนเครื่องแคชเชียร์:
@@ -120,12 +152,21 @@ pip install pywebview pandas openpyxl matplotlib
    └── cloudflared.exe    # ไบนารีเชื่อมต่อระบบสั่งอาหาร 4G/5G
    ```
 
-
-
-
-
-
 ---
+
+## ขั้นตอนการนำขึ้น GitHub Release (How to Release)
+
+1. เข้าไปยัง Repository บน GitHub: [peephuwit/food-pos](https://github.com/peephuwit/food-pos)
+2. ไปที่แถบขวามือ คลิกที่หัวข้อ **Releases** แล้วกด **Draft a new release**
+3. กำหนดข้อมูล Release:
+   - **Choose a tag:** ตั้งชื่อแท็กเวอร์ชัน เช่น `v1.0.0` แล้วกด **Create new tag**
+   - **Release title:** ตั้งชื่อเวอร์ชัน เช่น `FoodPOS v1.0.0 (Release)`
+   - **Description:** ใส่รายละเอียดฟีเจอร์หรือการอัปเดต
+4. แนบไฟล์ติดตั้งลงในช่อง **Attach binaries by dropping them here or selecting them**:
+   - สำหรับ macOS: ลากไฟล์ `dist/FoodPOS.dmg` ไปวาง
+   - สำหรับ Windows: ลากไฟล์ `FoodPOS.exe` หรือโฟลเดอร์ `dist/FoodPOS` ที่บีบอัดเป็น `.zip` ไปวาง
+5. คลิก **Publish release** เพื่อเผยแพร่ทันที
+   - ปุ่มดาวน์โหลดในหน้า README จะเชื่อมโยงไปยัง Release ล่าสุดโดยอัตโนมัติ
 
 ## ฐานข้อมูลและการสำรองข้อมูล (Database & Backup)
 

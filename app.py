@@ -38,7 +38,7 @@ sys.path.insert(0, str(BASE_DIR))
 PORT = 8000
 SERVER_URL = f"http://127.0.0.1:{PORT}"
 APP_TITLE = "Food POS — ระบบจัดการร้านอาหาร & แคชเชียร์"
-ICON_PATH = BUNDLE_DIR / "img" / "icon.ico"
+ICON_PATH = BUNDLE_DIR / "img" / ("icon.icns" if sys.platform == "darwin" and (BUNDLE_DIR / "img" / "icon.icns").exists() else "icon.ico")
 
 try:
     import backend.server
@@ -47,7 +47,12 @@ except ImportError:
 
 def log_error(err):
     try:
-        with open(BASE_DIR / "error.log", "a", encoding="utf-8") as f:
+        if getattr(sys, 'frozen', False) and sys.platform == "darwin":
+            log_dir = Path.home() / "Library" / "Logs" / "FoodPOS"
+        else:
+            log_dir = BASE_DIR
+        log_dir.mkdir(parents=True, exist_ok=True)
+        with open(log_dir / "error.log", "a", encoding="utf-8") as f:
             f.write(f"[{datetime.datetime.now()}] {err}\n")
     except Exception:
         pass

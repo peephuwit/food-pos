@@ -18,6 +18,22 @@ import sys
 
 def resolve_db_path():
     if getattr(sys, 'frozen', False):
+        if sys.platform == "darwin":
+            app_support = Path.home() / "Library" / "Application Support" / "FoodPOS"
+            app_support.mkdir(parents=True, exist_ok=True)
+            target = app_support / "pos.db"
+            if not target.exists():
+                bundle_db = None
+                if hasattr(sys, '_MEIPASS'):
+                    bundle_db = Path(sys._MEIPASS) / "backend" / "pos.db"
+                if not bundle_db or not bundle_db.exists():
+                    bundle_db = Path(sys.executable).resolve().parent.parent / "Resources" / "backend" / "pos.db"
+                if not bundle_db or not bundle_db.exists():
+                    bundle_db = Path(sys.executable).resolve().parent / "pos.db"
+                if bundle_db and bundle_db.exists():
+                    import shutil
+                    shutil.copy2(bundle_db, target)
+            return target
         exe_dir = Path(sys.executable).resolve().parent
     else:
         exe_dir = Path(__file__).resolve().parent

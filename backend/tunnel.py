@@ -30,8 +30,23 @@ def resolve_cloudflared_bin():
             return exe_dir / "backend" / "cloudflared.exe"
         return exe_dir / "cloudflared.exe"
     else:
+        if getattr(sys, 'frozen', False):
+            if hasattr(sys, '_MEIPASS'):
+                bundle_bin = Path(sys._MEIPASS) / "cloudflared"
+                if bundle_bin.exists():
+                    return bundle_bin
+            mac_frameworks_bin = Path(sys.executable).resolve().parent.parent / "Frameworks" / "cloudflared"
+            if mac_frameworks_bin.exists():
+                return mac_frameworks_bin
+        if (exe_dir / "cloudflared").exists():
+            return exe_dir / "cloudflared"
         found_bin = shutil.which("cloudflared")
-        return Path(found_bin) if found_bin else (exe_dir / "cloudflared")
+        if found_bin:
+            return Path(found_bin)
+        for p in ["/opt/homebrew/bin/cloudflared", "/usr/local/bin/cloudflared"]:
+            if Path(p).exists():
+                return Path(p)
+        return exe_dir / "cloudflared"
 
 CLOUDFLARED_BIN = resolve_cloudflared_bin()
 
