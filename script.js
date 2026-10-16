@@ -323,10 +323,21 @@ function loadAnalyticsView(period, customDate, customMonth, startDate, endDate, 
   if (revLabel) {
     if (CURRENT_ANALYTICS_PERIOD === 'today') revLabel.textContent = 'ยอดขายวันนี้';
     else if (CURRENT_ANALYTICS_PERIOD === 'this_week') revLabel.textContent = 'ยอดขายสัปดาห์นี้ (จันทร์ - อาทิตย์)';
-    else if (CURRENT_ANALYTICS_PERIOD === 'this_year') revLabel.textContent = 'ยอดขายประจำปีนี้ (' + new Date().getFullYear() + ')';
-    else if (CURRENT_ANALYTICS_PERIOD === 'custom_year') revLabel.textContent = 'ยอดขายประจำปี (' + CURRENT_CUSTOM_YEAR + ')';
-    else if (CURRENT_ANALYTICS_PERIOD === 'date') revLabel.textContent = 'ยอดขายประจำวัน (' + CURRENT_CUSTOM_DATE + ')';
-    else if (CURRENT_ANALYTICS_PERIOD === 'custom_month') revLabel.textContent = 'ยอดขายประจำเดือน (' + CURRENT_CUSTOM_MONTH + ')';
+    else if (CURRENT_ANALYTICS_PERIOD === 'this_month') {
+      var d = new Date();
+      var thaiM = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+      revLabel.textContent = 'ยอดขายประจำเดือนนี้ (' + thaiM[d.getMonth()] + ' ' + (d.getFullYear() + 543) + ')';
+    }
+    else if (CURRENT_ANALYTICS_PERIOD === 'this_year') revLabel.textContent = 'ยอดขายประจำปีนี้ (' + (new Date().getFullYear() + 543) + ')';
+    else if (CURRENT_ANALYTICS_PERIOD === 'custom_year') revLabel.textContent = 'ยอดขายประจำปี ' + (parseInt(CURRENT_CUSTOM_YEAR, 10) + 543);
+    else if (CURRENT_ANALYTICS_PERIOD === 'date') revLabel.textContent = 'ยอดขายประจำวัน (' + (CURRENT_CUSTOM_DATE ? thaiDate(CURRENT_CUSTOM_DATE) : '') + ')';
+    else if (CURRENT_ANALYTICS_PERIOD === 'custom_month') {
+      var parts = (CURRENT_CUSTOM_MONTH || '').split('-');
+      var thaiShortM = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      var idx = parseInt(parts[1], 10) - 1;
+      var name = (idx >= 0 && idx < 12) ? thaiShortM[idx] : parts[1];
+      revLabel.textContent = 'ยอดขายประจำเดือน (' + name + ' ' + (parseInt(parts[0], 10) + 543) + ')';
+    }
     else if (CURRENT_ANALYTICS_PERIOD === 'range') revLabel.textContent = 'ยอดขาย' + (CURRENT_WEEK_LABEL ? ' ' + CURRENT_WEEK_LABEL : '') + ' (' + CURRENT_RANGE_START + ' ถึง ' + CURRENT_RANGE_END + ')';
     else revLabel.textContent = 'ยอดขายสะสมทั้งหมด';
   }
@@ -496,7 +507,11 @@ function selectAnalyticsWeek(weekNum, startDate, endDate) {
 
 // ฟังก์ชันเลือกเดือนจากพาเนล Monthly Breakdown
 function selectAnalyticsMonth(monthStr) {
-  if ($('analytics-month-picker')) $('analytics-month-picker').value = monthStr;
+  if (monthStr && monthStr.indexOf('-') !== -1) {
+    var parts = monthStr.split('-');
+    if ($('analytics-year-select')) $('analytics-year-select').value = parts[0];
+    if ($('analytics-month-select')) $('analytics-month-select').value = parts[1];
+  }
   loadAnalyticsView('custom_month', '', monthStr, '', '', '', '');
 }
 
@@ -504,7 +519,7 @@ function selectAnalyticsMonth(monthStr) {
 document.querySelectorAll('.analytics-filter-btn').forEach(function (btn) {
   btn.addEventListener('click', function () {
     if ($('analytics-date-picker')) $('analytics-date-picker').value = '';
-    if ($('analytics-month-picker')) $('analytics-month-picker').value = '';
+    if ($('analytics-month-select')) $('analytics-month-select').value = '';
     if ($('analytics-year-select')) $('analytics-year-select').value = '';
     loadAnalyticsView(this.dataset.period, '', '', '', '', '', '');
   });
@@ -515,21 +530,35 @@ var datePicker = $('analytics-date-picker');
 if (datePicker) {
   datePicker.addEventListener('change', function () {
     if (this.value) {
-      if ($('analytics-month-picker')) $('analytics-month-picker').value = '';
+      if ($('analytics-month-select')) $('analytics-month-select').value = '';
       if ($('analytics-year-select')) $('analytics-year-select').value = '';
       loadAnalyticsView('date', this.value, '', '', '', '', '');
+    }
+  });
+  datePicker.addEventListener('click', function () {
+    if (typeof this.showPicker === 'function') {
+      try { this.showPicker(); } catch (e) {}
     }
   });
 }
 
 // ผูก Event Listener ให้ช่องเลือกเดือน
-var monthPicker = $('analytics-month-picker');
-if (monthPicker) {
-  monthPicker.addEventListener('change', function () {
+var monthSelect = $('analytics-month-select');
+if (monthSelect) {
+  monthSelect.addEventListener('change', function () {
     if (this.value) {
       if ($('analytics-date-picker')) $('analytics-date-picker').value = '';
-      if ($('analytics-year-select')) $('analytics-year-select').value = '';
-      loadAnalyticsView('custom_month', '', this.value, '', '', '', '');
+      var ySelect = $('analytics-year-select');
+      var y = (ySelect && ySelect.value) ? ySelect.value : new Date().getFullYear();
+      if (ySelect && !ySelect.value) ySelect.value = y;
+      loadAnalyticsView('custom_month', '', y + '-' + this.value, '', '', '', '');
+    } else {
+      var ySelect = $('analytics-year-select');
+      if (ySelect && ySelect.value) {
+        loadAnalyticsView('custom_year', '', '', '', '', '', ySelect.value);
+      } else {
+        loadAnalyticsView('all', '', '', '', '', '', '');
+      }
     }
   });
 }
@@ -540,8 +569,20 @@ if (yearSelect) {
   yearSelect.addEventListener('change', function () {
     if (this.value) {
       if ($('analytics-date-picker')) $('analytics-date-picker').value = '';
-      if ($('analytics-month-picker')) $('analytics-month-picker').value = '';
-      loadAnalyticsView('custom_year', '', '', '', '', '', this.value);
+      var mSelect = $('analytics-month-select');
+      if (mSelect && mSelect.value) {
+        loadAnalyticsView('custom_month', '', this.value + '-' + mSelect.value, '', '', '', '');
+      } else {
+        loadAnalyticsView('custom_year', '', '', '', '', '', this.value);
+      }
+    } else {
+      var mSelect = $('analytics-month-select');
+      if (mSelect && mSelect.value) {
+        var y = new Date().getFullYear();
+        loadAnalyticsView('custom_month', '', y + '-' + mSelect.value, '', '', '', '');
+      } else {
+        loadAnalyticsView('all', '', '', '', '', '', '');
+      }
     }
   });
 }
@@ -1528,6 +1569,11 @@ $('checkout-btn').addEventListener('click', checkout);
 $('day-date').addEventListener('change', function () {
   if (this.value) loadOrders(this.value);
   else this.value = ORDERS_DATE;
+});
+$('day-date').addEventListener('click', function () {
+  if (typeof this.showPicker === 'function') {
+    try { this.showPicker(); } catch (e) {}
+  }
 });
 $('day-prev').addEventListener('click', function () { loadOrders(shiftYmd(ORDERS_DATE, -1)); });
 $('day-next').addEventListener('click', function () { loadOrders(shiftYmd(ORDERS_DATE, 1)); });

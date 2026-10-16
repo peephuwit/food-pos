@@ -776,17 +776,84 @@ body.no-bill .main { margin-right: 0; }
   margin-bottom: 14px;
 }
 
+input[type="date"] {
+  cursor: pointer;
+  color-scheme: light;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity .15s, transform .15s;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
 .daybar input[type="date"] {
   height: 36px;
-  padding: 0 10px;
+  padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
-  font: inherit;
+  font: 500 13.5px var(--font);
   color: var(--ink);
   outline: none;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
 }
-.daybar input[type="date"]:focus { border-color: var(--orange); }
+.daybar input[type="date"]:hover { border-color: var(--orange); }
+.daybar input[type="date"]:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(227, 104, 59, 0.15);
+}
+
+/* ── กล่องตัวเลือกวัน เดือน ปี ของสถิติยอดขาย (Analytics Picker Pills) ── */
+.analytics-picker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--ink);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color .15s, box-shadow .15s;
+}
+.analytics-picker-pill:focus-within,
+.analytics-picker-pill:hover {
+  border-color: var(--orange);
+  box-shadow: 0 1px 4px rgba(227, 104, 59, 0.12);
+}
+.analytics-picker-pill label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  user-select: none;
+}
+.analytics-picker-pill input,
+.analytics-picker-pill select {
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font: 500 13px var(--font);
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+}
+.analytics-picker-pill select option {
+  color: var(--ink);
+  background: #fff;
+  padding: 4px;
+}
 
 .day-nav {
   display: flex;

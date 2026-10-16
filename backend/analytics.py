@@ -86,7 +86,7 @@ def get_sales_overview(period="all", custom_date=None, custom_month=None, start_
 
     # กำหนด target year และ target month
     target_year_str = str(custom_year) if (period == "custom_year" and custom_year) else (str(now.year) if period == "this_year" else None)
-    target_month_str = custom_month if (period == "custom_month" and custom_month) else (now.strftime("%Y-%m") if period == "this_week" else None)
+    target_month_str = custom_month if (period == "custom_month" and custom_month) else (now.strftime("%Y-%m") if period in ("this_week", "this_month") else None)
     
     filtered_rows = []
     month_rows = []
@@ -114,6 +114,8 @@ def get_sales_overview(period="all", custom_date=None, custom_month=None, start_
         if period == "today" and diff_days == 0:
             filtered_rows.append(r)
         elif period == "this_week" and order_date >= monday_this_week and order_date <= (monday_this_week + datetime.timedelta(days=6)):
+            filtered_rows.append(r)
+        elif period == "this_month" and order_month_str == now.strftime("%Y-%m"):
             filtered_rows.append(r)
         elif period == "date" and custom_date:
             if order_date_str == custom_date:
