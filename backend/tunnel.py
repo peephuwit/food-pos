@@ -76,6 +76,7 @@ def _tunnel_worker():
     cmd = [
         str(CLOUDFLARED_BIN),
         "tunnel",
+        "--protocol", "http2",
         "--url", "http://127.0.0.1:8000",
         "--no-autoupdate"
     ]
@@ -90,7 +91,7 @@ def _tunnel_worker():
 
         _tunnel_proc = subprocess.Popen(
             cmd,
-            stdout=subprocess.PIPE,
+            stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
             text=True,
             bufsize=1,
