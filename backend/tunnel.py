@@ -54,11 +54,24 @@ CURRENT_TUNNEL_URL = None
 _tunnel_proc = None
 _tunnel_lock = threading.Lock()
 
+def kill_orphaned_cloudflared():
+    try:
+        if sys.platform != 'win32':
+            subprocess.run(['pkill', '-f', 'cloudflared tunnel'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(0.2)
+        else:
+            subprocess.run(['taskkill', '/F', '/IM', 'cloudflared.exe'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
 def _tunnel_worker():
     global CURRENT_TUNNEL_URL, _tunnel_proc
     if not CLOUDFLARED_BIN.exists():
         print(f"[Tunnel] cloudflared binary not found at {CLOUDFLARED_BIN}")
         return
+
+    # เคลียร์โปรเซส cloudflared เก่าที่อาจตกค้างจากการปิดโปรแกรมครั้งก่อน
+    kill_orphaned_cloudflared()
 
     cmd = [
         str(CLOUDFLARED_BIN),
