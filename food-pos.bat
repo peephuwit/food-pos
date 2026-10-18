@@ -8,12 +8,20 @@ echo   กำลังเริ่มระบบ Food POS...
 echo ==========================================
 
 REM 1. ตรวจสอบ Virtual Environment ในโฟลเดอร์โปรเจกต์
+if exist ".venv\Scripts\pythonw.exe" (
+    start "" ".venv\Scripts\pythonw.exe" app.py
+    exit /b 0
+)
 if exist ".venv\Scripts\python.exe" (
-    start "" ".venv\Scripts\pythonw.exe" app.py 2>nul || ".venv\Scripts\python.exe" app.py
+    start "" ".venv\Scripts\python.exe" app.py
+    exit /b 0
+)
+if exist "venv\Scripts\pythonw.exe" (
+    start "" "venv\Scripts\pythonw.exe" app.py
     exit /b 0
 )
 if exist "venv\Scripts\python.exe" (
-    start "" "venv\Scripts\pythonw.exe" app.py 2>nul || "venv\Scripts\python.exe" app.py
+    start "" "venv\Scripts\python.exe" app.py
     exit /b 0
 )
 
@@ -26,7 +34,7 @@ if %ERRORLEVEL% EQU 0 (
 
 where python >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-    python app.py
+    start "" python app.py
     exit /b 0
 )
 
