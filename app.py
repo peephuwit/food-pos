@@ -66,11 +66,26 @@ def is_server_running(port=PORT):
     except Exception:
         return False
 
+def free_port_if_stuck(port=PORT):
+    """เคลียร์ process ซอมบี้ที่ค้างบน port ถ้า server ไม่ตอบสนอง HTTP"""
+    try:
+        if sys.platform != 'win32':
+            import subprocess
+            out = subprocess.check_output(['lsof', '-ti', f':{port}'], text=True).strip()
+            for pid_str in out.split():
+                if pid_str and int(pid_str) != os.getpid():
+                    os.kill(int(pid_str), 9)
+    except Exception:
+        pass
+
 def start_backend():
     """สตาร์ท Backend Server ใน Thread เบื้องหลังถ้ายังไม่รัน"""
     if is_server_running(PORT):
         print(f"[*] Backend server is already running on {SERVER_URL}")
         return
+
+    # ถ้าพอร์ตถูกกุมไว้แต่ไม่ตอบสนอง HTTP ให้เคลียร์ process ซอมบี้ก่อน
+    free_port_if_stuck(PORT)
 
     print(f"[*] Starting POS backend server on {SERVER_URL}...")
     def _run():
@@ -84,16 +99,16 @@ def start_backend():
     server_thread = threading.Thread(target=_run, daemon=True)
     server_thread.start()
 
-    # รอจนกว่า Server จะพร้อมตอบสนอง (สูงสุด 5 วินาที)
+    # รอจนกว่า Server จะพร้อมตอบสนอง (สูงสุด 12 วินาที)
     start_time = time.time()
-    while time.time() - start_time < 5:
+    while time.time() - start_time < 12:
         if is_server_running(PORT):
             time.sleep(0.3)
             print("[+] Backend server is ready!")
             return
         time.sleep(0.1)
     print("[!] Server startup wait timed out, proceeding to open window.")
-    log_error("Server startup wait timed out after 5 seconds.")
+    log_error("Server startup wait timed out after 12 seconds.")
 
 def main():
     # 1. สตาร์ท Backend

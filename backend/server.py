@@ -732,6 +732,7 @@ def run_server(port=8000):
     # สตาร์ท Cloudflare Tunnel อัตโนมัติในเบื้องหลัง เพื่อให้มือถือ 4G/5G สแกนได้ทันที
     threading.Thread(target=start_tunnel, daemon=True).start()
     server_address = ('', port)
+    ThreadingHTTPServer.allow_reuse_address = True
     httpd = ThreadingHTTPServer(server_address, POSHandler)
     local_ip = get_local_ip()
     print("=" * 55)
