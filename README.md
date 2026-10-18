@@ -9,20 +9,21 @@
 สามารถดาวน์โหลดเวอร์ชันสำเร็จรูปไปเปิดใช้งานได้ทันที โดยไม่ต้องติดตั้ง Python หรือโปรแกรมเสริมใดๆ:
 
 <p align="center">
-  <a href="https://github.com/peephuwit/food-pos/releases/latest">
-    <img src="https://img.shields.io/badge/Download-Windows_(.exe)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows" />
+  <a href="https://github.com/peephuwit/food-pos/releases/latest/download/FoodPOS.exe">
+    <img src="https://img.shields.io/badge/Direct_Download-Windows_(.exe)-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Download for Windows" />
   </a>
   &nbsp;&nbsp;
-  <a href="https://github.com/peephuwit/food-pos/releases/latest">
-    <img src="https://img.shields.io/badge/Download-macOS_(.dmg)-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for macOS" />
+  <a href="https://github.com/peephuwit/food-pos/releases/latest/download/FoodPOS.dmg">
+    <img src="https://img.shields.io/badge/Direct_Download-macOS_(.dmg)-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download for macOS" />
   </a>
 </p>
 
-| ระบบปฏิบัติการ | ไฟล์ติดตั้ง | รูปแบบ |
+| ระบบปฏิบัติการ | ลิงก์ดาวน์โหลดโดยตรง (Direct Download) | รูปแบบ |
 | :--- | :--- | :--- |
-| **Windows 10 / 11** | [FoodPOS for Windows](https://github.com/peephuwit/food-pos/releases/latest) | Single-file Portable (`.exe`) |
-| **macOS 11+** | [FoodPOS for macOS (.dmg)](https://github.com/peephuwit/food-pos/releases/latest) | Apple Disk Image (`.dmg`) ลากเข้า Applications |
-| **macOS 11+** | [FoodPOS for macOS (.zip)](https://github.com/peephuwit/food-pos/releases/latest) | Compressed Archive (`.zip`) แตกไฟล์แล้วเปิดแอพได้ทันที |
+| **Windows 10 / 11** | [ดาวน์โหลด FoodPOS.exe](https://github.com/peephuwit/food-pos/releases/latest/download/FoodPOS.exe) | Single-file Portable (`.exe`) |
+| **macOS 11+** | [ดาวน์โหลด FoodPOS.dmg](https://github.com/peephuwit/food-pos/releases/latest/download/FoodPOS.dmg) | Apple Disk Image (`.dmg`) ลากเข้า Applications |
+
+*(หรือดูประวัติเวอร์ชันทั้งหมดได้ที่หน้า [GitHub Releases](https://github.com/peephuwit/food-pos/releases))*
 
 > [!NOTE]
 > ### 💡 วิธีเปิดใช้งานครั้งแรกบน macOS (First Launch on macOS)
