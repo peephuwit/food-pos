@@ -69,12 +69,20 @@ def is_server_running(port=PORT):
 def free_port_if_stuck(port=PORT):
     """เคลียร์ process ซอมบี้ที่ค้างบน port ถ้า server ไม่ตอบสนอง HTTP"""
     try:
+        import subprocess
         if sys.platform != 'win32':
-            import subprocess
             out = subprocess.check_output(['lsof', '-ti', f':{port}'], text=True).strip()
             for pid_str in out.split():
                 if pid_str and int(pid_str) != os.getpid():
                     os.kill(int(pid_str), 9)
+        else:
+            out = subprocess.check_output(f'netstat -ano | findstr :{port}', shell=True, text=True).strip()
+            for line in out.splitlines():
+                parts = line.split()
+                if len(parts) >= 5 and 'LISTENING' in line:
+                    pid = int(parts[-1])
+                    if pid != os.getpid() and pid > 0:
+                        subprocess.run(['taskkill', '/F', '/PID', str(pid)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
 
